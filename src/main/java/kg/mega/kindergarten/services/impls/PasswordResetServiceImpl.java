@@ -33,7 +33,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     @Override
     @Transactional
-    public void sendResetCode(String email) {
+    public String sendResetCode(String email) {
         if (userRepo.findByEmail(email).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь с таким email не найден");
         }
@@ -52,6 +52,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         
         codeRepo.save(resetCode);
         emailService.sendPasswordResetCode(email, code);
+        
+        return code;
     }
 
     @Override

@@ -73,10 +73,19 @@ public class AuthController {
     @Operation(summary = "Запрос кода восстановления пароля")
     @PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordDto dto) {
-        passwordResetService.sendResetCode(dto.email());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Код восстановления отправлен на email");
-        return ResponseEntity.ok(response);
+        try {
+            String code = passwordResetService.sendResetCode(dto.email());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Код восстановления отправлен на email. Проверьте также логи сервера, если email не настроен.");
+            // Возвращаем код в ответе для отладки (в продакшене убрать)
+            response.put("code", code);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("error", e.getClass().getSimpleName());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 
     @Operation(summary = "Восстановление пароля с кодом")

@@ -24,12 +24,20 @@ public class DataInit {
                 AppUser admin = new AppUser();
                 admin.setUsername(adminUsername);
                 admin.setPassword(passwordEncoder.encode(adminPassword));
+                admin.setEmail("admin@kindergarten.local");
                 admin.setRole(RegisterRole.ADMIN);
 
                 userRepo.save(admin);
-                System.out.println(" Администратор создан: username=admin, password=admin123");
+                System.out.println("✅ Администратор создан: username=admin, password=admin123, email=admin@kindergarten.local");
             } else {
-                System.out.println(" Администратор уже существует");
+                // Обновляем email если его нет
+                AppUser admin = userRepo.findByUsername(adminUsername).get();
+                if (admin.getEmail() == null || admin.getEmail().isEmpty()) {
+                    admin.setEmail("admin@kindergarten.local");
+                    userRepo.save(admin);
+                    System.out.println("✅ Email добавлен администратору");
+                }
+                System.out.println("ℹ️ Администратор уже существует");
             }
         };
     }
