@@ -36,7 +36,8 @@ public class AppUserServiceImpl implements AppUserService {
         user.setUsername(dto.username());
         user.setPassword(passwordEncoder.encode(dto.password()));
         user.setEmail(dto.email());
-        user.setRole(null);
+        // Автоматически назначаем роль PARENT при регистрации
+        user.setRole(RegisterRole.PARENT);
 
         return userRepo.save(user);
 

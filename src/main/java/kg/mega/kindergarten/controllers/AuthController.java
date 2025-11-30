@@ -45,7 +45,7 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> register(@Valid @RequestBody RegistrationDto dto) {
         AppUser appUser = userService.register(dto);
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Успешная регистрация. Роль будет назначена администратором.");
+        response.put("message", "Успешная регистрация! Вам назначена роль PARENT. Теперь вы можете войти в систему.");
         return ResponseEntity.ok(response);
     }
 
