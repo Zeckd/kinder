@@ -52,15 +52,22 @@ public class AuthController {
     @Operation(summary = "Вход в систему")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDto dto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
-        );
-        UserDetails userDetails = userDetailsService.loadUserByUsername(dto.username());
-        String token = jwtService.generateToken(userDetails);
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        response.put("message", "Успешный вход");
-        return ResponseEntity.ok(response);
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
+            );
+            UserDetails userDetails = userDetailsService.loadUserByUsername(dto.username());
+            String token = jwtService.generateToken(userDetails);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("message", "Успешный вход");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Неверное имя пользователя или пароль");
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(401).body(response);
+        }
     }
 
     @Operation(summary = "Запрос кода восстановления пароля")

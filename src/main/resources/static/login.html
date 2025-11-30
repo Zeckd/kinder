@@ -45,17 +45,28 @@
                     body: JSON.stringify({ username, password })
                 });
                 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    const text = await response.text();
+                    errorDiv.textContent = `Ошибка сервера: ${response.status} ${response.statusText}. ${text || 'Проверьте консоль браузера'}`;
+                    errorDiv.style.display = 'block';
+                    console.error('Response error:', text);
+                    return;
+                }
                 
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
                     window.location.href = '/index.html';
                 } else {
-                    errorDiv.textContent = data.message || 'Ошибка входа';
+                    errorDiv.textContent = data.message || data.error || `Ошибка входа: ${response.status}`;
                     errorDiv.style.display = 'block';
+                    console.error('Login error:', data);
                 }
             } catch (error) {
-                errorDiv.textContent = 'Ошибка соединения с сервером';
+                console.error('Network error:', error);
+                errorDiv.textContent = `Ошибка соединения с сервером: ${error.message}. Убедитесь, что сервер запущен на порту 8080.`;
                 errorDiv.style.display = 'block';
             }
         });
