@@ -12,4 +12,6 @@ public interface AppUserService {
     AppUser changeRole(Long userId, RegisterRole role);
 
     List<AppUser> getAll();
+    
+    AppUser findByUsername(String username);
 }

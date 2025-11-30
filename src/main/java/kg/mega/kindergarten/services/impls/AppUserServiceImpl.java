@@ -28,10 +28,14 @@ public class AppUserServiceImpl implements AppUserService {
         if (userRepo.findByUsername(dto.username()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
         }
+        if (userRepo.findByEmail(dto.email()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
+        }
 
         AppUser user = new AppUser();
         user.setUsername(dto.username());
         user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setEmail(dto.email());
         user.setRole(null);
 
         return userRepo.save(user);
@@ -51,5 +55,11 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public List<AppUser> getAll() {
         return userRepo.findAll();
+    }
+
+    @Override
+    public AppUser findByUsername(String username) {
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 }

@@ -23,6 +23,10 @@ public class AppUserDetailsService implements UserDetailsService {
         AppUser appUser = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("пользователь не найден!"));
 
+        if (appUser.getRole() == null) {
+            throw new UsernameNotFoundException("Роль пользователя не назначена!");
+        }
+
         return User.builder()
                 .username(appUser.getUsername())
                 .password(appUser.getPassword())

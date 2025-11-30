@@ -1,0 +1,45 @@
+{
+  "name": "Kindergarten Management System",
+  "description": "Система управления детским садом",
+  "repository": "https://github.com/yourusername/kindergarten",
+  "logo": "https://via.placeholder.com/150",
+  "keywords": ["java", "spring-boot", "kindergarten"],
+  "env": {
+    "DATABASE_URL": {
+      "description": "URL базы данных PostgreSQL",
+      "required": true
+    },
+    "DATABASE_USERNAME": {
+      "description": "Имя пользователя базы данных",
+      "required": true
+    },
+    "DATABASE_PASSWORD": {
+      "description": "Пароль базы данных",
+      "required": true
+    },
+    "SPRING_MAIL_USERNAME": {
+      "description": "Email для отправки писем",
+      "required": true
+    },
+    "SPRING_MAIL_PASSWORD": {
+      "description": "Пароль приложения Gmail",
+      "required": true
+    },
+    "JWT_SECRET": {
+      "description": "Секретный ключ для JWT",
+      "generator": "secret"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/java"
+    }
+  ]
+}
+

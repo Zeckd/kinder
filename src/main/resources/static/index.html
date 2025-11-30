@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детский сад - Главная</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌼 Детский сад</h1>
+            <nav>
+                <a href="/index.html" class="active">Главная</a>
+                <a href="/login.html" id="loginLink">Вход</a>
+                <a href="/register.html" id="registerLink">Регистрация</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Выход</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="welcome-section">
+                <h2>Добро пожаловать в систему управления детским садом!</h2>
+                <p>Управляйте группами, детьми, родителями и платежами в одном месте.</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>👥 Управление детьми</h3>
+                    <p>Добавляйте и отслеживайте информацию о детях</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👨‍👩‍👧‍👦 Родители</h3>
+                    <p>Управляйте данными родителей и контактами</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👩‍🏫 Воспитатели</h3>
+                    <p>Назначайте воспитателей к группам</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Платежи</h3>
+                    <p>Отслеживайте платежи и финансовую отчетность</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/auth.js"></script>
+</body>
+</html>
+

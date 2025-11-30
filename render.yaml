@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: kindergarten-app
+    env: java
+    region: singapore
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      - key: SPRING_MAIL_PORT
+        value: 587
+      - key: SPRING_MAIL_USERNAME
+        sync: false
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 8080
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
+
+databases:
+  - name: kindergarten-db
+    plan: free
+    region: singapore
+

@@ -15,6 +15,9 @@ public class AppUser {
 
     private String password;
 
+    @Column(unique = true)
+    private String email;
+
     @Enumerated(EnumType.STRING)
     private RegisterRole role;
 
@@ -48,5 +51,13 @@ public class AppUser {
 
     public void setRole(RegisterRole role) {
         this.role = role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
