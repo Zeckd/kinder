@@ -12,6 +12,12 @@
             <h1>🌼 Детский сад</h1>
             <nav>
                 <a href="/index.html" class="active">Главная</a>
+                <a href="/children.html">Дети</a>
+                <a href="/parents.html">Родители</a>
+                <a href="/teachers.html">Воспитатели</a>
+                <a href="/groups.html">Группы</a>
+                <a href="/payments.html">Платежи</a>
+                <a href="/age-groups.html">Возрастные группы</a>
                 <a href="/login.html" id="loginLink">Вход</a>
                 <a href="/register.html" id="registerLink">Регистрация</a>
                 <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Выход</a>
@@ -25,142 +31,39 @@
             </div>
 
             <div class="features">
-                <div class="feature-card" onclick="navigateToFeature('children')">
+                <a href="/children.html" class="feature-card">
                     <h3>👥 Управление детьми</h3>
                     <p>Добавляйте и отслеживайте информацию о детях</p>
                     <button class="feature-btn">Перейти</button>
-                </div>
-                <div class="feature-card" onclick="navigateToFeature('parents')">
+                </a>
+                <a href="/parents.html" class="feature-card">
                     <h3>👨‍👩‍👧‍👦 Родители</h3>
                     <p>Управляйте данными родителей и контактами</p>
                     <button class="feature-btn">Перейти</button>
-                </div>
-                <div class="feature-card" onclick="navigateToFeature('teachers')">
+                </a>
+                <a href="/teachers.html" class="feature-card">
                     <h3>👩‍🏫 Воспитатели</h3>
                     <p>Назначайте воспитателей к группам</p>
                     <button class="feature-btn">Перейти</button>
-                </div>
-                <div class="feature-card" onclick="navigateToFeature('payments')">
+                </a>
+                <a href="/groups.html" class="feature-card">
+                    <h3>📚 Группы</h3>
+                    <p>Управляйте группами и их составом</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/payments.html" class="feature-card">
                     <h3>💰 Платежи</h3>
                     <p>Отслеживайте платежи и финансовую отчетность</p>
                     <button class="feature-btn">Перейти</button>
-                </div>
+                </a>
+                <a href="/age-groups.html" class="feature-card">
+                    <h3>🎂 Возрастные группы</h3>
+                    <p>Управляйте возрастными категориями</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
             </div>
-            
-            <div id="content-area" class="content-area"></div>
         </main>
     </div>
     <script src="/js/auth.js"></script>
-    <script>
-        function navigateToFeature(feature) {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                alert('Пожалуйста, войдите в систему для доступа к функциям');
-                window.location.href = '/login.html';
-                return;
-            }
-            
-            const contentArea = document.getElementById('content-area');
-            contentArea.innerHTML = '<div class="loading">Загрузка...</div>';
-            
-            // Здесь можно добавить загрузку данных через API
-            switch(feature) {
-                case 'children':
-                    loadChildren();
-                    break;
-                case 'parents':
-                    loadParents();
-                    break;
-                case 'teachers':
-                    loadTeachers();
-                    break;
-                case 'payments':
-                    loadPayments();
-                    break;
-            }
-        }
-        
-        async function loadChildren() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/child/get-list?page=0&size=10', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    displayData('Дети', data);
-                } else {
-                    showError('Не удалось загрузить данные о детях');
-                }
-            } catch (error) {
-                showError('Ошибка загрузки данных');
-            }
-        }
-        
-        async function loadParents() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/parent/get-list?page=0&size=10', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    displayData('Родители', data);
-                } else {
-                    showError('Не удалось загрузить данные о родителях');
-                }
-            } catch (error) {
-                showError('Ошибка загрузки данных');
-            }
-        }
-        
-        async function loadTeachers() {
-            try {
-                const response = await fetch('/api/teacher/get-list?page=0&size=10');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    displayData('Воспитатели', data);
-                } else {
-                    showError('Не удалось загрузить данные о воспитателях');
-                }
-            } catch (error) {
-                showError('Ошибка загрузки данных');
-            }
-        }
-        
-        async function loadPayments() {
-            showError('Функция платежей в разработке');
-        }
-        
-        function displayData(title, data) {
-            const contentArea = document.getElementById('content-area');
-            let html = `<h2>${title}</h2>`;
-            
-            if (data && data.length > 0) {
-                html += '<div class="data-list">';
-                data.forEach(item => {
-                    html += `<div class="data-item">${JSON.stringify(item, null, 2)}</div>`;
-                });
-                html += '</div>';
-            } else {
-                html += '<p>Данные не найдены</p>';
-            }
-            
-            contentArea.innerHTML = html;
-        }
-        
-        function showError(message) {
-            const contentArea = document.getElementById('content-area');
-            contentArea.innerHTML = `<div class="error-message">${message}</div>`;
-        }
-    </script>
 </body>
 </html>
-

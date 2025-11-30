@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Возрастные группы - Детский сад</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌼 Детский сад</h1>
+            <nav>
+                <a href="/index.html">Главная</a>
+                <a href="/children.html">Дети</a>
+                <a href="/parents.html">Родители</a>
+                <a href="/teachers.html">Воспитатели</a>
+                <a href="/groups.html">Группы</a>
+                <a href="/payments.html">Платежи</a>
+                <a href="/age-groups.html" class="active">Возрастные группы</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Выход</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="page-header">
+                <h2>🎂 Управление возрастными группами</h2>
+                <button class="btn btn-primary" onclick="showCreateForm()">+ Добавить возрастную группу</button>
+            </div>
+
+            <div id="ageGroupForm" class="form-section" style="display: none;">
+                <h3 id="formTitle">Добавить возрастную группу</h3>
+                <form id="ageGroupFormElement">
+                    <input type="hidden" id="ageGroupId">
+                    <div class="form-group">
+                        <label for="name">Название *</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ageGroup">Возрастная группа * (1-7)</label>
+                        <input type="number" id="ageGroup" min="1" max="7" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Цена * (сом)</label>
+                        <input type="number" id="price" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-section">
+                <div class="table-controls">
+                    <input type="text" id="searchInput" placeholder="Поиск..." onkeyup="filterTable()">
+                    <div>
+                        <label>Страница: </label>
+                        <input type="number" id="pageInput" value="0" min="0" onchange="loadAgeGroups()" style="width: 60px;">
+                        <label>Размер: </label>
+                        <select id="sizeInput" onchange="loadAgeGroups()">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="loading" class="loading">Загрузка...</div>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <table id="ageGroupsTable" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Возрастная группа</th>
+                            <th>Цена</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ageGroupsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="/js/auth.js"></script>
+    <script src="/js/age-groups.js"></script>
+</body>
+</html>
+
