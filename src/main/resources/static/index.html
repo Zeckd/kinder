@@ -1,69 +1,420 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Детский сад - Главная</title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kindergarten Admin — Frontend</title>
+  <style>
+    /* Simple modern CSS — feel free to tweak */
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7c3aed; --glass: rgba(255,255,255,0.03);
+      --success: #16a34a; --danger:#ef4444; --soft:#111827;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;}
+    body{margin:0;background:linear-gradient(180deg,#071127 0%, #071733 60%); color:#e6eef8;}
+    .app{max-width:1100px;margin:28px auto;padding:24px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7);}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    header h1{font-size:20px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    button, .btn{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .nav{display:flex;gap:8px;flex-wrap:wrap}
+    .card{background:var(--card);padding:16px;border-radius:10px;margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:260px 1fr;gap:16px}
+    nav.sidebar{position:sticky;top:24px}
+    .menu{display:flex;flex-direction:column;gap:8px}
+    .menu button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);text-align:left;padding:10px;border-radius:8px}
+    .menu button.active{border-color:var(--accent);color:white;box-shadow:0 4px 20px rgba(124,58,237,0.15)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    form.row{display:flex;gap:8px;flex-wrap:wrap}
+    input, select, textarea{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;color:inherit;min-width:160px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+    .muted{color:var(--muted);font-size:13px}
+    .small{font-size:13px}
+    .top-actions{display:flex;gap:8px;align-items:center}
+    .notice{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);margin-bottom:8px}
+    .hidden{display:none}
+    .form-inline{display:flex;gap:8px;align-items:center}
+    footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .token-badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-size:12px}
+    .danger{background:linear-gradient(90deg,#8b1e1e,#ef4444);}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🌼 Детский сад</h1>
-            <nav>
-                <a href="/index.html" class="active">Главная</a>
-                <a href="/children.html">Дети</a>
-                <a href="/parents.html">Родители</a>
-                <a href="/teachers.html">Воспитатели</a>
-                <a href="/groups.html">Группы</a>
-                <a href="/payments.html">Платежи</a>
-                <a href="/age-groups.html">Возрастные группы</a>
-                <a href="/login.html" id="loginLink">Вход</a>
-                <a href="/register.html" id="registerLink">Регистрация</a>
-                <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Выход</a>
-            </nav>
-        </header>
-        
-        <main>
-            <div class="welcome-section">
-                <h2>Добро пожаловать в систему управления детским садом!</h2>
-                <p>Управляйте группами, детьми, родителями и платежами в одном месте.</p>
-            </div>
+  <div class="app">
+    <header>
+      <h1>Kindergarten Admin — Фронтенд</h1>
+      <div class="controls">
+        <div class="token-badge" id="userInfo">Не авторизован</div>
+        <div class="nav">
+          <button id="btnLogin" class="btn ghost">Войти</button>
+          <button id="btnRegister" class="btn ghost">Регистрация</button>
+        </div>
+      </div>
+    </header>
 
-            <div class="features">
-                <a href="/children.html" class="feature-card">
-                    <h3>👥 Управление детьми</h3>
-                    <p>Добавляйте и отслеживайте информацию о детях</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
-                <a href="/parents.html" class="feature-card">
-                    <h3>👨‍👩‍👧‍👦 Родители</h3>
-                    <p>Управляйте данными родителей и контактами</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
-                <a href="/teachers.html" class="feature-card">
-                    <h3>👩‍🏫 Воспитатели</h3>
-                    <p>Назначайте воспитателей к группам</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
-                <a href="/groups.html" class="feature-card">
-                    <h3>📚 Группы</h3>
-                    <p>Управляйте группами и их составом</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
-                <a href="/payments.html" class="feature-card">
-                    <h3>💰 Платежи</h3>
-                    <p>Отслеживайте платежи и финансовую отчетность</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
-                <a href="/age-groups.html" class="feature-card">
-                    <h3>🎂 Возрастные группы</h3>
-                    <p>Управляйте возрастными категориями</p>
-                    <button class="feature-btn">Перейти</button>
-                </a>
+    <div class="grid">
+      <nav class="sidebar card">
+        <div class="menu" id="entityMenu">
+          <button data-entity="auth" class="active">Auth (login/register)</button>
+          <button data-entity="age-group">Age Groups</button>
+          <button data-entity="child">Children</button>
+          <button data-entity="group">Groups</button>
+          <button data-entity="parent">Parents</button>
+          <button data-entity="teacher">Teachers</button>
+          <button data-entity="payment">Payments</button>
+          <button data-entity="child-group-history">Child Group History</button>
+        </div>
+      </nav>
+
+      <main>
+        <section class="card" id="mainPanel">
+          <div class="section-title">
+            <h2 id="panelTitle">Auth</h2>
+            <div class="top-actions">
+              <label class="muted small">API:</label>
+              <input id="apiBase" placeholder="/" value="/" style="min-width:200px" />
+              <button id="btnRefresh" class="btn ghost">Обновить список</button>
             </div>
-        </main>
+          </div>
+
+          <div id="panelContent">
+            <!-- dynamic content injected here -->
+          </div>
+        </section>
+
+        <footer>
+          <div>Сделано автоматически. Сохраните файл как <code>index.html</code> и откройте в браузере. Для работы с backend убедитесь, что фронтенд и backend доступны по одному origin или backend поддерживает CORS. Токен хранится в localStorage под ключом <code>kg_token</code>.</div>
+        </footer>
+      </main>
     </div>
-    <script src="/js/auth.js"></script>
+  </div>
+
+  <template id="authTemplate">
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <h3>Вход</h3>
+        <form id="loginForm" class="row">
+          <input name="username" placeholder="Username" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <div class="form-inline">
+            <button class="btn" type="submit">Войти</button>
+            <button id="btnLogout" type="button" class="btn ghost">Выйти</button>
+            <button id="btnForgot" type="button" class="btn ghost">Забыл пароль</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Регистрация</h3>
+        <form id="registerForm" class="row">
+          <input name="firstName" placeholder="First name" required />
+          <input name="lastName" placeholder="Last name" required />
+          <input name="email" placeholder="Email" type="email" required />
+          <input name="username" placeholder="Username" required />
+          <input name="password" placeholder="Password" type="password" required />
+          <select name="role">
+            <option value="PARENT">PARENT</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+          <button class="btn" type="submit">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="forgotPanel" class="card hidden">
+      <h3>Восстановление пароля</h3>
+      <form id="forgotForm" class="row">
+        <input name="email" placeholder="Email для отправки кода" required />
+        <button class="btn" type="submit">Отправить код</button>
+      </form>
+      <div class="muted small">Код придет в email или в ответе (dev). После получения кода используйте форму ниже.</div>
+
+      <form id="resetForm" class="row" style="margin-top:12px">
+        <input name="email" placeholder="Email" required />
+        <input name="code" placeholder="Код из письма" required />
+        <input name="newPassword" placeholder="Новый пароль" required />
+        <button class="btn" type="submit">Сбросить пароль</button>
+      </form>
+    </div>
+  </template>
+
+  <template id="entityTemplate">
+    <div>
+      <div class="notice" id="entityNotice"></div>
+      <div class="card">
+        <h3 id="entityName">Entity</h3>
+        <form id="createForm" class="row">
+          <!-- dynamic fields -->
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Список</h3>
+        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+          <input id="queryId" placeholder="ID для поиска" />
+          <button id="btnFindById" class="btn ghost">Найти по ID</button>
+          <label class="muted small">Page</label>
+          <input id="page" type="number" value="0" style="width:70px" />
+          <label class="muted small">Size</label>
+          <input id="size" type="number" value="20" style="width:70px" />
+          <button id="btnList" class="btn">Получить список</button>
+        </div>
+        <div id="listArea"></div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // Simple SPA-ish frontend for controllers provided
+    const apiBaseInput = document.getElementById('apiBase');
+    const panelContent = document.getElementById('panelContent');
+    const panelTitle = document.getElementById('panelTitle');
+    const entityMenu = document.getElementById('entityMenu');
+    const userInfo = document.getElementById('userInfo');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+
+    const templates = {
+      auth: document.getElementById('authTemplate'),
+      entity: document.getElementById('entityTemplate')
+    }
+
+    let currentEntity = 'auth';
+
+    function apiUrl(path){
+      const base = apiBaseInput.value.trim() || '/';
+      // normalize
+      return (base.endsWith('/') ? base.slice(0,-1) : base) + (path.startsWith('/')?path:path.replace(/^/,'/'));
+    }
+
+    function authHeader(){
+      const token = localStorage.getItem('kg_token');
+      return token ? { 'Authorization': 'Bearer ' + token } : {};
+    }
+
+    function showNotice(msg, isError){
+      const n = document.getElementById('entityNotice');
+      if(n){n.textContent = msg; n.style.borderLeft = isError ? '4px solid var(--danger)' : '4px solid var(--accent)';}
+    }
+
+    function setUserInfo(){
+      const token = localStorage.getItem('kg_token');
+      if(token){userInfo.textContent = 'Авторизован — токен в localStorage';}
+      else userInfo.textContent = 'Не авторизован';
+    }
+
+    function clearMain(){ panelContent.innerHTML = ''; }
+
+    function renderAuth(){
+      clearMain();
+      panelTitle.textContent = 'Auth';
+      const node = templates.auth.content.cloneNode(true);
+      panelContent.appendChild(node);
+
+      const loginForm = document.getElementById('loginForm');
+      loginForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(loginForm);
+        const body = { username: fd.get('username'), password: fd.get('password') };
+        try{
+          const res = await fetch(apiUrl('/api/auth/login'), {
+            method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+          });
+          const data = await res.json();
+          if(res.ok){ localStorage.setItem('kg_token', data.token); setUserInfo(); alert('Успешный вход'); }
+          else{ alert(data.message || JSON.stringify(data)); }
+        }catch(err){alert(err.message)}
+      });
+
+      const registerForm = document.getElementById('registerForm');
+      registerForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(registerForm);
+        const body = { firstName: fd.get('firstName'), lastName: fd.get('lastName'), email: fd.get('email'), username: fd.get('username'), password: fd.get('password') };
+        try{
+          const res = await fetch(apiUrl('/api/auth/register'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+          const data = await res.json();
+          if(res.ok) alert(data.message || 'OK'); else alert(data.message || JSON.stringify(data));
+        }catch(err){alert(err.message)}
+      });
+
+      document.getElementById('btnForgot').addEventListener('click', ()=>{
+        document.getElementById('forgotPanel').classList.toggle('hidden');
+      });
+
+      const forgotForm = document.getElementById('forgotForm');
+      forgotForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(forgotForm);
+        try{
+          const res = await fetch(apiUrl('/api/auth/forgot-password'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:fd.get('email')})});
+          const data = await res.json();
+          if(res.ok){ alert(data.message + (data.code ? '\nКод: ' + data.code : '')); }
+          else alert(data.message||JSON.stringify(data));
+        }catch(err){alert(err.message)}
+      });
+
+      const resetForm = document.getElementById('resetForm');
+      resetForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(resetForm);
+        try{
+          const res = await fetch(apiUrl('/api/auth/reset-password'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:fd.get('email'), code:fd.get('code'), newPassword:fd.get('newPassword')})});
+          const data = await res.json();
+          if(res.ok) alert(data.message||'OK'); else alert(data.message||JSON.stringify(data));
+        }catch(err){alert(err.message)}
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', ()=>{ localStorage.removeItem('kg_token'); setUserInfo(); alert('Вы вышли'); });
+    }
+
+    // Generic entity renderer using CRUDController conventions
+    const schemas = {
+      'age-group': {name:'Age Group', path:'/api/age-group', fields:[{k:'name',label:'Name'},{k:'minAge',label:'Min Age',type:'number'},{k:'maxAge',label:'Max Age',type:'number'}]},
+      'child': {name:'Child', path:'/api/child', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'parentId',label:'Parent ID',type:'number'}]},
+      'group': {name:'Group', path:'/api/group', fields:[{k:'name',label:'Name'},{k:'ageGroupId',label:'AgeGroup ID',type:'number'}]},
+      'parent': {name:'Parent', path:'/api/parent', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'email',label:'Email'},{k:'phone',label:'Phone'}], extraStatus:true, statusOptions:['PARENT','ADMIN','TEACHER']},
+      'teacher': {name:'Teacher', path:'/api/teacher', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'email',label:'Email'}], extraStatus:true, statusOptions:['TEACHER','ASSISTANT','OTHER']},
+      'payment': {name:'Payment', path:'/api/payment', fields:[{k:'amount',label:'Amount',type:'number'},{k:'childId',label:'Child ID',type:'number'},{k:'month',label:'Month'}], extraStatus:true, statusOptions:['MONTHLY','ONE_TIME']},
+      'child-group-history': {name:'ChildGroupHistory', path:'/api/child-group-history', fields:[{k:'childId',label:'Child ID',type:'number'},{k:'groupId',label:'Group ID',type:'number'},{k:'startDate',label:'Start Date',type:'date'},{k:'endDate',label:'End Date',type:'date'}]}
+    };
+
+    async function renderEntity(entityKey){
+      clearMain();
+      currentEntity = entityKey;
+      panelTitle.textContent = schemas[entityKey].name || entityKey;
+      const node = templates.entity.content.cloneNode(true);
+      panelContent.appendChild(node);
+      document.getElementById('entityName').textContent = schemas[entityKey].name || entityKey;
+
+      const createForm = document.getElementById('createForm');
+      const path = schemas[entityKey].path;
+      // build fields
+      createForm.innerHTML = '';
+      schemas[entityKey].fields.forEach(f=>{
+        const input = document.createElement('input');
+        input.name = f.k; input.placeholder = f.label; input.required = true;
+        if(f.type) input.type = f.type; createForm.appendChild(input);
+      });
+      if(schemas[entityKey].extraStatus){
+        const sel = document.createElement('select'); sel.name = 'status';
+        schemas[entityKey].statusOptions.forEach(o=>{ const opt = document.createElement('option'); opt.value=o; opt.textContent=o; sel.appendChild(opt); })
+        createForm.appendChild(sel);
+      }
+      const createBtn = document.createElement('button'); createBtn.className='btn'; createBtn.textContent='Создать'; createBtn.type='submit';
+      createForm.appendChild(createBtn);
+
+      createForm.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const fd = new FormData(createForm); const body = {};
+        schemas[entityKey].fields.forEach(f=> body[f.k]=fd.get(f.k));
+        const status = fd.get('status');
+        // POST to /create. For controllers with status, append ?status=...
+        let url = apiUrl(path + '/create');
+        if(status) url += '?status=' + encodeURIComponent(status);
+        try{
+          const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json', ...authHeader()}, body:JSON.stringify(body)});
+          const data = await res.json();
+          if(res.ok){ showNotice('Создано: ' + (data.id||'OK')); fetchList(); } else { showNotice(data.message||JSON.stringify(data), true); }
+        }catch(err){ showNotice(err.message,true); }
+      });
+
+      document.getElementById('btnList').addEventListener('click', fetchList);
+      document.getElementById('btnFindById').addEventListener('click', async ()=>{
+        const id = document.getElementById('queryId').value; if(!id){ alert('Введите ID'); return; }
+        try{
+          const res = await fetch(apiUrl(path + '/find-by-id?id=' + id), {headers:{...authHeader()}});
+          const data = await res.json();
+          if(res.ok){ renderList([data]); } else showNotice(data.message||JSON.stringify(data), true);
+        }catch(err){ showNotice(err.message,true); }
+      });
+
+      async function fetchList(){
+        const page = document.getElementById('page').value || 0; const size = document.getElementById('size').value || 20;
+        try{
+          const res = await fetch(apiUrl(path + '/get-list?page=' + page + '&size=' + size), {headers:{...authHeader()}});
+          const data = await res.json();
+          if(res.ok){ renderList(data); } else showNotice(data.message||JSON.stringify(data), true);
+        }catch(err){ showNotice(err.message,true); }
+      }
+
+      function renderList(items){
+        const area = document.getElementById('listArea'); area.innerHTML = '';
+        if(!items || items.length===0){ area.innerHTML='<div class="muted">Пусто</div>'; return; }
+        const table = document.createElement('table');
+        const thead = document.createElement('thead'); const headerRow = document.createElement('tr');
+        // collect columns
+        const cols = new Set(); items.forEach(it=> Object.keys(it||{}).forEach(k=>cols.add(k)));
+        const colArr = Array.from(cols);
+        colArr.forEach(c=>{ const th = document.createElement('th'); th.textContent = c; headerRow.appendChild(th); });
+        headerRow.appendChild(document.createElement('th'));
+        thead.appendChild(headerRow); table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        items.forEach(it=>{
+          const tr = document.createElement('tr');
+          colArr.forEach(c=>{ const td = document.createElement('td'); td.textContent = displayVal(it[c]); tr.appendChild(td); });
+          const tdActions = document.createElement('td');
+          const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Edit';
+          const btnDelete = document.createElement('button'); btnDelete.className='btn ghost'; btnDelete.textContent='Delete';
+          btnEdit.addEventListener('click', ()=> openEditModal(it));
+          btnDelete.addEventListener('click', ()=> doDelete(it.id));
+          tdActions.appendChild(btnEdit); tdActions.appendChild(btnDelete); tr.appendChild(tdActions);
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody); area.appendChild(table);
+      }
+
+      function displayVal(v){ if(v===null||v===undefined) return ''; if(typeof v==='object') return JSON.stringify(v); return v; }
+
+      function openEditModal(obj){
+        // simple prompt based edit
+        const updates = {};
+        schemas[entityKey].fields.forEach(f=>{
+          const val = prompt('Значение ' + f.label, obj[f.k]||'');
+          if(val!==null) updates[f.k]=val;
+        });
+        if(Object.keys(updates).length===0) return;
+        const deleteFlag = false; // for now
+        const params = new URLSearchParams(); params.append('id', obj.id);
+        if(schemas[entityKey].extraStatus){ const status = prompt('Статус (если нужно)', ''); if(status) params.append('status', status); }
+        params.append('delete', deleteFlag ? 'DELETED' : 'EXIST');
+        // PUT to /update?id=...&status=...&delete=...
+        fetch(apiUrl(path + '/update?' + params.toString()), {method:'PUT', headers:{'Content-Type':'application/json', ...authHeader()}, body:JSON.stringify(updates)}).then(r=>r.json()).then(d=>{ if(d) { showNotice('Обновлено'); fetchList(); } }).catch(e=>showNotice(e.message,true));
+      }
+
+      async function doDelete(id){ if(!confirm('Удалить ID ' + id + '?')) return; try{ const res = await fetch(apiUrl(path + '/delete?id=' + id), {method:'DELETE', headers:{...authHeader()}}); const data = await res.json(); if(res.ok){ showNotice('Удалено'); fetchList(); } else showNotice(data.message||JSON.stringify(data), true); }catch(err){showNotice(err.message,true);} }
+
+      // specific extra endpoints
+      if(entityKey==='group'){
+        const area = document.getElementById('listArea');
+        const helper = document.createElement('div'); helper.className='muted'; helper.textContent='Special: add teacher/assistant/child via /api/group/add-teacher-assistant-child'; area.prepend(helper);
+      }
+
+      // initial list
+      fetchList();
+    }
+
+    // wire menu
+    entityMenu.querySelectorAll('button').forEach(b=> b.addEventListener('click', (e)=>{
+      entityMenu.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      e.target.classList.add('active');
+      const key = e.target.getAttribute('data-entity');
+      if(key==='auth') renderAuth(); else renderEntity(key);
+    }));
+
+    // header quick buttons
+    btnLogin.addEventListener('click', ()=>{ entityMenu.querySelector('[data-entity="auth"]').click(); });
+    btnRegister.addEventListener('click', ()=>{ entityMenu.querySelector('[data-entity="auth"]').click(); });
+
+    document.getElementById('btnRefresh').addEventListener('click', ()=>{
+      // refresh current panel
+      if(currentEntity==='auth') renderAuth(); else renderEntity(currentEntity);
+    });
+
+    setUserInfo(); renderAuth();
+  </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package kg.mega.kindergarten.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import kg.mega.kindergarten.enums.RegisterRole;
 
 @Entity
@@ -12,6 +14,11 @@ public class AppUser {
 
     @Column(unique = true)
     private String username;
+
+    @NotBlank(message = "Email обязателен")
+    @Email(message = "Email должен быть валидным")
+    @Column(unique = true)
+    private String email;
 
     private String password;
 
@@ -32,6 +39,14 @@ public class AppUser {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
