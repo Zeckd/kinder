@@ -216,13 +216,20 @@
       const url = apiUrl('/api/health');
       if(!url) return false;
       
-      // Пробуем GET запрос к health endpoint
+      // Пробуем GET запрос к health endpoint с таймаутом
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд для health check
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
-        }
+        },
+        signal: controller.signal,
+        mode: 'cors' // Явно указываем CORS режим
       });
+      
+      clearTimeout(timeoutId);
       
       if(response.ok) {
         const data = await response.json();
@@ -230,7 +237,11 @@
       }
       return false;
     } catch (error) {
-      console.error('Server connection check failed:', error);
+      if(error.name === 'AbortError') {
+        console.error('Health check timeout');
+      } else {
+        console.error('Server connection check failed:', error);
+      }
       return false;
     }
   }
