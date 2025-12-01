@@ -599,18 +599,24 @@
     // right: forgot/reset
     const right = document.createElement('div');
     const forgotCard = document.createElement('div'); forgotCard.className='card';
-    forgotCard.innerHTML = `<h3>Forgot Password</h3>
+    forgotCard.innerHTML = `<h3>Забыли пароль?</h3>
       <form id="forgotFormLocal" class="row">
-        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
-        <div class="actions"><button class="btn" type="submit">Send code</button></div>
-      </form>`;
+        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required placeholder="your@email.com" /></label>
+        <div class="actions"><button class="btn" type="submit">Отправить код</button></div>
+      </form>
+      <div id="resetCodeDisplay" style="display:none; margin-top:12px; padding:12px; background:rgba(124,58,237,0.1); border-radius:8px; border:1px solid var(--accent);">
+        <div class="small muted">Код восстановления отправлен!</div>
+        <div style="margin-top:8px; font-size:18px; font-weight:bold; color:var(--accent); letter-spacing:4px; text-align:center;" id="resetCodeValue"></div>
+        <div class="small muted" style="margin-top:8px; text-align:center;">Код действителен 10 минут</div>
+        <div class="small muted" style="margin-top:4px; text-align:center;">Также проверьте логи сервера и почту</div>
+      </div>`;
     const resetCard = document.createElement('div'); resetCard.className='card';
-    resetCard.innerHTML = `<h3>Reset Password</h3>
+    resetCard.innerHTML = `<h3>Сброс пароля</h3>
       <form id="resetFormLocal" class="row">
-        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
-        <label class="field"><span class="small muted">Code</span><input name="code" required /></label>
-        <label class="field"><span class="small muted">New password</span><input name="newPassword" type="password" required /></label>
-        <div class="actions"><button class="btn" type="submit">Reset</button></div>
+        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required placeholder="your@email.com" /></label>
+        <label class="field"><span class="small muted">Код восстановления</span><input name="code" required placeholder="123456" maxlength="6" /></label>
+        <label class="field"><span class="small muted">Новый пароль</span><input name="newPassword" type="password" required minlength="3" /></label>
+        <div class="actions"><button class="btn" type="submit">Сбросить пароль</button></div>
       </form>`;
     right.appendChild(forgotCard); right.appendChild(resetCard);
 
@@ -625,38 +631,138 @@
     $('#loginFormLocal').addEventListener('submit', async (e)=>{
       e.preventDefault();
       const fd = new FormData(e.target);
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Вход...';
       try{
         const data = await fetchJson(apiUrl('/api/auth/login'), { method:'POST', body: { username: fd.get('username'), password: fd.get('password') }});
-        if(data && data.token){ localStorage.setItem('kg_token', data.token); showUserInfo(); alert('Успешный вход'); }
-        else alert('Ответ: ' + JSON.stringify(data));
-      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        if(data && data.token){ 
+          localStorage.setItem('kg_token', data.token); 
+          showUserInfo(); 
+          alert('Успешный вход!');
+          e.target.reset();
+        }
+        else alert('Ошибка: ' + JSON.stringify(data));
+      }catch(err){ 
+        console.error(err); 
+        const errorMsg = err.data?.message || err.message || 'Ошибка входа';
+        alert('Ошибка: ' + errorMsg);
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
     });
 
     $('#regFormLocal').addEventListener('submit', async (e)=>{
       e.preventDefault();
       const fd = new FormData(e.target);
+      const username = fd.get('username');
+      const password = fd.get('password');
+      const email = fd.get('email');
+      if(!username || !password || !email) {
+        alert('Заполните все поля');
+        return;
+      }
+      if(password.length < 3) {
+        alert('Пароль должен быть не менее 3 символов');
+        return;
+      }
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Регистрация...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/register'), { method:'POST', body: { username: fd.get('username'), password: fd.get('password'), email: fd.get('email') }});
-        alert(data.message || 'Registered');
-      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        const data = await fetchJson(apiUrl('/api/auth/register'), { method:'POST', body: { username: username, password: password, email: email }});
+        alert(data.message || 'Регистрация успешна! Теперь вы можете войти.');
+        e.target.reset();
+      }catch(err){ 
+        console.error(err); 
+        const errorMsg = err.data?.message || err.message || 'Ошибка регистрации';
+        alert('Ошибка: ' + errorMsg);
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
     });
 
     $('#forgotFormLocal').addEventListener('submit', async (e)=>{
       e.preventDefault();
       const fd = new FormData(e.target);
+      const email = fd.get('email');
+      if(!email) { alert('Введите email'); return; }
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/forgot-password'), { method:'POST', body: { email: fd.get('email') }});
-        alert(data.message + (data.code ? '\\nCode: ' + data.code : ''));
-      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        const data = await fetchJson(apiUrl('/api/auth/forgot-password'), { method:'POST', body: { email: email }});
+        // Показываем код в UI
+        if(data.code) {
+          const codeDisplay = $('#resetCodeDisplay');
+          const codeValue = $('#resetCodeValue');
+          if(codeDisplay && codeValue) {
+            codeValue.textContent = data.code;
+            codeDisplay.style.display = 'block';
+            // Автоматически копируем код в поле формы сброса
+            const resetCodeInput = document.querySelector('#resetFormLocal input[name="code"]');
+            const resetEmailInput = document.querySelector('#resetFormLocal input[name="email"]');
+            if(resetCodeInput) resetCodeInput.value = data.code;
+            if(resetEmailInput) resetEmailInput.value = email;
+          }
+        }
+        // Показываем также в alert для надёжности
+        let msg = data.message || 'Код отправлен';
+        if(data.code) {
+          msg += '\n\nКод восстановления: ' + data.code;
+        }
+        alert(msg);
+        // Логируем в консоль
+        if(data.code) console.log('Код восстановления для ' + email + ': ' + data.code);
+      }catch(err){ 
+        console.error(err); 
+        const errorMsg = err.data?.message || err.message || 'Ошибка при отправке кода';
+        alert('Ошибка: ' + errorMsg);
+        // Скрываем блок с кодом при ошибке
+        const codeDisplay = $('#resetCodeDisplay');
+        if(codeDisplay) codeDisplay.style.display = 'none';
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
     });
 
     $('#resetFormLocal').addEventListener('submit', async (e)=>{
       e.preventDefault();
       const fd = new FormData(e.target);
+      const email = fd.get('email');
+      const code = fd.get('code');
+      const newPassword = fd.get('newPassword');
+      if(!email || !code || !newPassword) { 
+        alert('Заполните все поля'); 
+        return; 
+      }
+      if(newPassword.length < 3) {
+        alert('Пароль должен быть не менее 3 символов');
+        return;
+      }
       try{
-        const data = await fetchJson(apiUrl('/api/auth/reset-password'), { method:'POST', body: { email: fd.get('email'), code: fd.get('code'), newPassword: fd.get('newPassword') }});
-        alert(data.message || 'Password reset');
-      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        const data = await fetchJson(apiUrl('/api/auth/reset-password'), { 
+          method:'POST', 
+          body: { 
+            email: email, 
+            code: code, 
+            newPassword: newPassword 
+          }
+        });
+        alert(data.message || 'Пароль успешно изменён! Теперь вы можете войти с новым паролем.');
+        // Очищаем форму после успешного сброса
+        e.target.reset();
+      }catch(err){ 
+        console.error(err); 
+        const errorMsg = err.data?.message || err.message || 'Ошибка при сбросе пароля';
+        alert('Ошибка: ' + errorMsg + '\n\nПроверьте:\n- Правильность email\n- Правильность кода\n- Код не истёк (действителен 10 минут)');
+      }
     });
   }
 

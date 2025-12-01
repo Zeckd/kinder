@@ -91,10 +91,19 @@ public class AuthController {
     @Operation(summary = "Восстановление пароля с кодом")
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordDto dto) {
-        passwordResetService.resetPassword(dto.email(), dto.code(), dto.newPassword());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Пароль успешно изменен");
-        return ResponseEntity.ok(response);
+        try {
+            passwordResetService.resetPassword(dto.email(), dto.code(), dto.newPassword());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Пароль успешно изменен. Теперь вы можете войти с новым паролем.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            response.put("error", e.getClass().getSimpleName());
+            int status = e.getMessage().contains("не найден") ? 404 : 
+                        e.getMessage().contains("Неверный") || e.getMessage().contains("истек") ? 400 : 500;
+            return ResponseEntity.status(status).body(response);
+        }
     }
 
     @Operation(summary = "Назначить роль пользователю (только для ADMIN)")
