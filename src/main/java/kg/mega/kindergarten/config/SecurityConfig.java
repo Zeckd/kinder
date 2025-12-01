@@ -44,24 +44,31 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/forgot-password.html", 
-                                "/reset-password.html", "/css/**", "/js/**", "/api/auth/register", 
-                                "/api/auth/login", "/api/auth/forgot-password", "/api/auth/reset-password",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
+                        // Разрешаем все статические ресурсы
+                        .requestMatchers("/", "/index.html", "/**/*.html", "/**/*.css", "/**/*.js", 
+                                "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.gif", "/**/*.svg",
+                                "/**/*.ico", "/**/*.woff", "/**/*.woff2", "/**/*.ttf", "/**/*.eot")
                         .permitAll()
-                        .requestMatchers("/api/teacher/get-list")
+                        // Health check
+                        .requestMatchers("/api/health")
                         .permitAll()
-                        .requestMatchers("/api/age-group/get-list")
+                        // Разрешаем все публичные API эндпоинты
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
+                        // Swagger
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**")
+                        .permitAll()
+                        // Публичные эндпоинты для чтения
+                        .requestMatchers("/api/teacher/get-list", "/api/age-group/get-list")
+                        .permitAll()
+                        // Остальные эндпоинты с проверкой ролей
                         .requestMatchers("/api/child/get-list")
                         .hasAnyRole("TEACHER", "ADMIN")
                         .requestMatchers("/api/child/find-by-id")
                         .hasAnyRole("TEACHER", "ADMIN", "PARENT")
                         .requestMatchers("/api/parent/create")
                         .hasAnyRole("PARENT", "ADMIN")
-                        .requestMatchers("/api/group/get-list")
-                        .hasAnyRole("TEACHER", "ADMIN", "PARENT")
-                        .requestMatchers("/api/group/find-by-id")
+                        .requestMatchers("/api/group/get-list", "/api/group/find-by-id")
                         .hasAnyRole("TEACHER", "ADMIN", "PARENT")
                         .requestMatchers("/api/payment/find-by-id")
                         .hasAnyRole("TEACHER", "ADMIN")
@@ -69,10 +76,12 @@ public class SecurityConfig {
                         .hasAnyRole("TEACHER", "ADMIN")
                         .requestMatchers("/api/parent/get-list")
                         .hasAnyRole("TEACHER", "ADMIN")
+                        // Все остальные API требуют роль ADMIN
                         .requestMatchers("/api/**")
                         .hasRole("ADMIN")
+                        // Все остальные запросы разрешены (для статических файлов)
                         .anyRequest()
-                        .authenticated())
+                        .permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -80,10 +89,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        // Разрешаем все origins для разработки и продакшена
         configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(false);
+        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowCredentials(false); // Должно быть false при "*" origins
+        configuration.setMaxAge(3600L); // Кешируем preflight на 1 час
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

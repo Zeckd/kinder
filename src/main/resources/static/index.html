@@ -170,7 +170,7 @@
       }
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 секунд таймаут
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
       opts.signal = controller.signal;
       
       const res = await fetch(url, opts);
@@ -185,22 +185,53 @@
       }
       
       if(!res.ok) {
-        const error = { status: res.status, data, message: data?.message || `HTTP ${res.status}` };
+        const error = { status: res.status, data, message: data?.message || `HTTP ${res.status}: ${res.statusText}` };
         throw error;
       }
       
       return data;
     } catch (error) {
       if(error.name === 'AbortError') {
-        throw { message: 'Превышено время ожидания. Проверьте подключение к серверу.', status: 0 };
+        throw { message: 'Превышено время ожидания (30 сек). Проверьте подключение к серверу.', status: 0 };
       }
-      if(error.message && error.message.includes('Failed to fetch')) {
+      if(error.message && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError'))) {
+        const baseUrl = document.getElementById('apiBase').value || 'не указан';
         throw { 
-          message: 'Не удалось подключиться к серверу. Проверьте:\n• Правильность API Base URL\n• Запущен ли сервер\n• Настройки CORS', 
+          message: `Не удалось подключиться к серверу.\n\nТекущий URL: ${baseUrl}\n\nПроверьте:\n• Правильность API Base URL (например: http://localhost:8080)\n• Запущен ли сервер (mvn spring-boot:run)\n• Нет ли блокировки файрволом\n• Настройки CORS на сервере`, 
           status: 0 
         };
       }
       throw error;
+    }
+  }
+
+  // Функция проверки доступности сервера
+  async function checkServerConnection() {
+    const baseUrl = document.getElementById('apiBase').value;
+    if(!baseUrl) {
+      return false;
+    }
+    
+    try {
+      const url = apiUrl('/api/health');
+      if(!url) return false;
+      
+      // Пробуем GET запрос к health endpoint
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if(response.ok) {
+        const data = await response.json();
+        return data.status === 'UP';
+      }
+      return false;
+    } catch (error) {
+      console.error('Server connection check failed:', error);
+      return false;
     }
   }
 
@@ -1002,6 +1033,23 @@
   if(savedApiBase) apiBaseInput.value = savedApiBase;
   apiBaseInput.addEventListener('change', () => {
     localStorage.setItem('apiBase', apiBaseInput.value);
+    // Проверяем подключение при изменении URL
+    checkServerConnection().then(connected => {
+      if(connected) {
+        showToast('Подключение к серверу установлено', 'success');
+      }
+    });
+  });
+
+  // Проверяем подключение при загрузке страницы
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      checkServerConnection().then(connected => {
+        if(!connected && apiBaseInput.value) {
+          showToast('Не удалось подключиться к серверу. Проверьте настройки.', 'warning');
+        }
+      });
+    }, 1000);
   });
 
   </script>
