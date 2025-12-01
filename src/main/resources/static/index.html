@@ -1,54 +1,69 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
-<link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детский сад - Главная</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<header>
-    <h1>Kindergarten Dashboard</h1>
-    <nav>
-        <a href="#" onclick="logout()">Выйти</a>
-    </nav>
-</header>
-<div class="container">
-    <h2>Age Groups</h2>
-    <table id="agegroup-table"></table>
-    <button onclick="createAgeGroup(prompt('Название группы:'))">Добавить AgeGroup</button>
+    <div class="container">
+        <header>
+            <h1>🌼 Детский сад</h1>
+            <nav>
+                <a href="/index.html" class="active">Главная</a>
+                <a href="/children.html">Дети</a>
+                <a href="/parents.html">Родители</a>
+                <a href="/teachers.html">Воспитатели</a>
+                <a href="/groups.html">Группы</a>
+                <a href="/payments.html">Платежи</a>
+                <a href="/age-groups.html">Возрастные группы</a>
+                <a href="/login.html" id="loginLink">Вход</a>
+                <a href="/register.html" id="registerLink">Регистрация</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Выход</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="welcome-section">
+                <h2>Добро пожаловать в систему управления детским садом!</h2>
+                <p>Управляйте группами, детьми, родителями и платежами в одном месте.</p>
+            </div>
 
-    <h2>Children</h2>
-    <table id="child-table"></table>
-    <button onclick="createChild({firstName: prompt('Имя'), lastName: prompt('Фамилия'), birthDate: prompt('Дата рождения YYYY-MM-DD')})">Добавить Child</button>
-
-    <h2>Groups</h2>
-    <table id="group-table"></table>
-    <button onclick="createGroup({name: prompt('Название группы')})">Добавить Group</button>
-
-    <h2>Teachers</h2>
-    <table id="teacher-table"></table>
-
-    <h2>Parents</h2>
-    <table id="parent-table"></table>
-
-    <h2>Payments</h2>
-    <table id="payment-table"></table>
-
-    <h2>Child Group History</h2>
-    <table id="history-table"></table>
-</div>
-
-<script src="/js/api.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/dashboard.js"></script>
-<script>
-loadAgeGroups();
-loadChildren();
-loadGroups();
-loadTeachers();
-loadParents();
-loadPayments();
-loadChildHistory();
-</script>
+            <div class="features">
+                <a href="/children.html" class="feature-card">
+                    <h3>👥 Управление детьми</h3>
+                    <p>Добавляйте и отслеживайте информацию о детях</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/parents.html" class="feature-card">
+                    <h3>👨‍👩‍👧‍👦 Родители</h3>
+                    <p>Управляйте данными родителей и контактами</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/teachers.html" class="feature-card">
+                    <h3>👩‍🏫 Воспитатели</h3>
+                    <p>Назначайте воспитателей к группам</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/groups.html" class="feature-card">
+                    <h3>📚 Группы</h3>
+                    <p>Управляйте группами и их составом</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/payments.html" class="feature-card">
+                    <h3>💰 Платежи</h3>
+                    <p>Отслеживайте платежи и финансовую отчетность</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+                <a href="/age-groups.html" class="feature-card">
+                    <h3>🎂 Возрастные группы</h3>
+                    <p>Управляйте возрастными категориями</p>
+                    <button class="feature-btn">Перейти</button>
+                </a>
+            </div>
+        </main>
+    </div>
+    <script src="/js/auth.js"></script>
 </body>
 </html>
