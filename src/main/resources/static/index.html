@@ -3,106 +3,129 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Kindergarten Admin — Single File Frontend</title>
+  <title>🌼 Kindergarten Admin Panel</title>
   <style>
-    /* Modern, clean admin look */
+    /* Современный красивый дизайн */
     :root{
-      --bg:#0f1724; --surface:#0b1220; --muted:#9aa4b2; --accent:#7c3aed; --glass: rgba(255,255,255,0.03);
-      --card-bg: #0b1220; --card-2: #071733; --success: #16a34a; --danger:#ef4444;
+      --bg:#0f1724; --surface:#0b1220; --muted:#9aa4b2; --accent:#7c3aed; 
+      --glass: rgba(255,255,255,0.03); --card-bg: #0b1220; --card-2: #071733; 
+      --success: #16a34a; --danger:#ef4444; --warning:#f59e0b;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071127 0%, #071733 60%);color:#e6eef8}
-    .wrap{max-width:1200px;margin:28px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7)}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    header h1{margin:0;font-size:20px}
-    .controls{display:flex;gap:8px;align-items:center}
-    .token{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);font-size:13px}
-    .btn{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:white;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .layout{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-top:18px}
-    nav.card, section.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px}
+    *{box-sizing:border-box; margin:0; padding:0}
+    html,body{height:100%;background:linear-gradient(180deg,#071127 0%, #071733 60%);color:#e6eef8}
+    .wrap{max-width:1400px;margin:20px auto;padding:24px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    header h1{margin:0;font-size:24px;font-weight:600;background:linear-gradient(135deg, #7c3aed, #a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .token{padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.05);font-size:13px;border:1px solid rgba(255,255,255,0.1)}
+    .token.success{background:rgba(22,163,74,0.1);border-color:var(--success);color:var(--success)}
+    input[type="text"]{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:10px 14px;border-radius:10px;color:inherit;font-size:14px;min-width:200px}
+    input[type="text"]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,0.1)}
+    .btn{background:var(--accent);border:none;padding:10px 20px;border-radius:10px;color:white;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s}
+    .btn:hover{background:#6d28d9;transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,0.3)}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted)}
+    .btn.ghost:hover{background:rgba(255,255,255,0.05);border-color:var(--accent);color:white}
+    .btn.success{background:var(--success)}
+    .btn.danger{background:var(--danger)}
+    .layout{display:grid;grid-template-columns:280px 1fr;gap:24px;margin-top:24px}
+    nav.card, section.card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)}
     nav .menu{display:flex;flex-direction:column;gap:8px}
-    nav .menu button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px;border-radius:8px;text-align:left;cursor:pointer}
-    nav .menu button.active{border-color:var(--accent);color:white;box-shadow:0 4px 20px rgba(124,58,237,0.15)}
-    section.card{min-height:380px}
-    .grid-two{display:grid;grid-template-columns:1fr 360px;gap:16px}
-    form.row{display:flex;flex-wrap:wrap;gap:10px}
-    label.field{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
-    input, select, textarea{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit;min-width:160px}
-    .actions{display:flex;gap:8px;align-items:center}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;text-align:left}
+    nav .menu button{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted);padding:12px 16px;border-radius:10px;text-align:left;cursor:pointer;font-size:14px;transition:all 0.2s}
+    nav .menu button:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:white}
+    nav .menu button.active{border-color:var(--accent);color:white;background:rgba(124,58,237,0.1);box-shadow:0 4px 20px rgba(124,58,237,0.15)}
+    section.card{min-height:500px}
+    .grid-two{display:grid;grid-template-columns:1fr 400px;gap:20px}
+    form.row{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
+    label.field{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:6px;min-width:200px}
+    label.field span{font-weight:500}
+    input, select, textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:10px 14px;border-radius:10px;color:inherit;font-size:14px;transition:all 0.2s}
+    input:focus, select:focus, textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,0.1)}
+    .actions{display:flex;gap:10px;align-items:center;margin-top:16px}
+    table{width:100%;border-collapse:collapse;margin-top:16px;background:rgba(255,255,255,0.02);border-radius:10px;overflow:hidden}
+    th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;text-align:left}
+    th{background:rgba(255,255,255,0.05);font-weight:600;color:white}
+    tr:hover{background:rgba(255,255,255,0.02)}
     .muted{color:var(--muted);font-size:13px}
-    .notice{padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px;color:var(--muted)}
-    .danger{background:linear-gradient(90deg,#8b1e1e,#ef4444)}
-    footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .notice{padding:12px;border-radius:10px;background:rgba(255,255,255,0.03);margin-bottom:12px;color:var(--muted);border-left:3px solid var(--accent)}
+    .danger{background:rgba(239,68,68,0.1);border-left-color:var(--danger)}
+    .success-notice{background:rgba(22,163,74,0.1);border-left-color:var(--success)}
+    footer{margin-top:20px;color:var(--muted);font-size:12px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05)}
     .small{font-size:12px;color:var(--muted)}
-    .flex{display:flex;gap:8px;align-items:center}
+    .flex{display:flex;gap:10px;align-items:center}
     .right{margin-left:auto}
-    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03)}
-    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:50}
-    .modal .box{background:var(--card-bg);padding:18px;border-radius:10px;width:720px;max-width:95%}
-    .hidden{display:none}
-    @media(max-width:900px){.layout{grid-template-columns:1fr}.grid-two{grid-template-columns:1fr}}
+    .pill{padding:6px 12px;border-radius:20px;background:rgba(255,255,255,0.05);font-size:12px}
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.8);z-index:1000;backdrop-filter:blur(4px)}
+    .modal .box{background:var(--card-bg);padding:24px;border-radius:16px;width:600px;max-width:95%;border:1px solid rgba(255,255,255,0.1);box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .hidden{display:none!important}
+    .toast{position:fixed;top:20px;right:20px;padding:16px 20px;border-radius:12px;background:var(--card-bg);border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:2000;min-width:300px;animation:slideIn 0.3s}
+    .toast.success{border-left:4px solid var(--success)}
+    .toast.error{border-left:4px solid var(--danger)}
+    .toast.warning{border-left:4px solid var(--warning)}
+    @keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .loading{opacity:0.6;pointer-events:none;position:relative}
+    .loading::after{content:'';position:absolute;top:50%;left:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .section-header h2{margin:0;font-size:20px;font-weight:600}
+    @media(max-width:1024px){.layout{grid-template-columns:1fr}.grid-two{grid-template-columns:1fr}}
+    .code-display{padding:16px;background:rgba(124,58,237,0.15);border-radius:12px;border:2px solid var(--accent);margin-top:16px;text-align:center}
+    .code-display .code{font-size:32px;font-weight:bold;color:var(--accent);letter-spacing:8px;margin:12px 0;font-family:'Courier New',monospace}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div>
-        <h1>Kindergarten Admin Panel</h1>
-        <div class="small muted">Frontend (single file). Укажи API Base — например <code>http://localhost:8080</code></div>
+        <h1>🌼 Kindergarten Admin Panel</h1>
+        <div class="small muted" style="margin-top:8px">Управление детским садом • Укажите API Base URL</div>
       </div>
       <div class="controls">
-        <input id="apiBase" placeholder="API base (http://localhost:8080)" value="http://localhost:8080" style="padding:8px;border-radius:8px;border:none"/>
+        <input id="apiBase" type="text" placeholder="http://localhost:8080" value="http://localhost:8080" style="min-width:250px"/>
         <div class="token" id="userInfo">Не авторизован</div>
-        <button class="btn ghost" id="btnShowAuth">Auth</button>
+        <button class="btn ghost" id="btnShowAuth">🔐 Авторизация</button>
       </div>
     </header>
 
     <div class="layout">
       <nav class="card">
+        <div style="margin-bottom:16px;font-weight:600;color:white">Меню</div>
         <div class="menu" id="menu">
-          <button data-key="auth" class="active">Auth</button>
-          <button data-key="age-group">Age Groups</button>
-          <button data-key="group">Groups</button>
-          <button data-key="child">Children</button>
-          <button data-key="parent">Parents</button>
-          <button data-key="teacher">Teachers</button>
-          <button data-key="payment">Payments</button>
-          <button data-key="child-group-history">Child Group History</button>
+          <button data-key="auth" class="active">🔐 Авторизация</button>
+          <button data-key="age-group">👶 Возрастные группы</button>
+          <button data-key="group">👥 Группы</button>
+          <button data-key="child">🧒 Дети</button>
+          <button data-key="parent">👨‍👩‍👧 Родители</button>
+          <button data-key="teacher">👩‍🏫 Воспитатели</button>
+          <button data-key="payment">💰 Платежи</button>
+          <button data-key="child-group-history">📋 История групп</button>
         </div>
       </nav>
 
       <main>
         <section class="card" id="panel">
           <div class="section-header">
-            <div class="flex">
-              <h2 id="panelTitle">Auth</h2>
-              <div class="small muted" style="margin-left:12px" id="panelHint">Войдите, чтобы получить JWT</div>
+            <div>
+              <h2 id="panelTitle">Авторизация</h2>
+              <div class="small muted" style="margin-top:4px" id="panelHint">Войдите в систему для доступа к функциям</div>
             </div>
-            <div class="right small muted">Token stored to localStorage <code>kg_token</code></div>
           </div>
 
-          <div id="panelContent" style="margin-top:12px">
+          <div id="panelContent" style="margin-top:20px">
             <!-- Dynamic content -->
           </div>
-
-          <footer style="margin-top:12px">
-            <div class="muted small">Один файл. JWT используется в заголовке Authorization: Bearer &lt;token&gt;.</div>
-          </footer>
         </section>
       </main>
     </div>
   </div>
 
-  <!-- Modal (used for edit) -->
+  <!-- Modal -->
   <div id="modal" class="modal hidden">
     <div class="box">
-      <h3 id="modalTitle">Edit</h3>
+      <h3 id="modalTitle" style="margin-bottom:20px">Редактирование</h3>
       <div id="modalBody"></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px">
         <button class="btn ghost" id="modalCancel">Отмена</button>
         <button class="btn" id="modalSave">Сохранить</button>
       </div>
@@ -118,6 +141,10 @@
 
   function apiUrl(path){
     const base = (document.getElementById('apiBase').value || '').replace(/\/$/, '');
+    if(!base) {
+      showToast('Укажите API Base URL', 'warning');
+      return null;
+    }
     if(!path.startsWith('/')) path = '/' + path;
     return base + path;
   }
@@ -128,39 +155,85 @@
   }
 
   async function fetchJson(url, opts = {}){
-    opts.headers = { ...(opts.headers||{}), 'Accept': 'application/json', ...authHeader() };
-    if(opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
-      opts.headers['Content-Type'] = 'application/json';
-      opts.body = JSON.stringify(opts.body);
+    if(!url) throw { message: 'URL не указан', status: 0 };
+    
+    try {
+      opts.headers = { 
+        ...(opts.headers||{}), 
+        'Accept': 'application/json', 
+        ...authHeader() 
+      };
+      
+      if(opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
+        opts.headers['Content-Type'] = 'application/json';
+        opts.body = JSON.stringify(opts.body);
+      }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 секунд таймаут
+      opts.signal = controller.signal;
+      
+      const res = await fetch(url, opts);
+      clearTimeout(timeoutId);
+      
+      const text = await res.text().catch(()=>'');
+      let data = null;
+      try{ 
+        data = text ? JSON.parse(text) : null;
+      }catch(e){ 
+        data = text || null;
+      }
+      
+      if(!res.ok) {
+        const error = { status: res.status, data, message: data?.message || `HTTP ${res.status}` };
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      if(error.name === 'AbortError') {
+        throw { message: 'Превышено время ожидания. Проверьте подключение к серверу.', status: 0 };
+      }
+      if(error.message && error.message.includes('Failed to fetch')) {
+        throw { 
+          message: 'Не удалось подключиться к серверу. Проверьте:\n• Правильность API Base URL\n• Запущен ли сервер\n• Настройки CORS', 
+          status: 0 
+        };
+      }
+      throw error;
     }
-    const res = await fetch(url, opts);
-    const text = await res.text().catch(()=>'');
-    let data = null;
-    try{ data = text ? JSON.parse(text) : null }catch(e){ data = text }
-    if(!res.ok) throw { status: res.status, data };
-    return data;
   }
 
   function showUserInfo(){
     const el = $('#userInfo');
     const t = localStorage.getItem('kg_token');
-    if(t) el.textContent = 'Авторизован (token present)';
-    else el.textContent = 'Не авторизован';
+    if(t) {
+      el.textContent = '✅ Авторизован';
+      el.classList.add('success');
+    } else {
+      el.textContent = '❌ Не авторизован';
+      el.classList.remove('success');
+    }
   }
 
-  function showNotice(msg, isError=false){
-    // simple alert for now; could render inside panel
-    if(isError) alert('Ошибка: ' + msg);
-    else { /* small toast */ console.log(msg); }
+  function showToast(message, type = 'success'){
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div style="font-weight:500;margin-bottom:4px">${type === 'error' ? '❌ Ошибка' : type === 'warning' ? '⚠️ Внимание' : '✅ Успех'}</div><div style="font-size:13px;color:var(--muted)">${message}</div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'slideIn 0.3s reverse';
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
   }
 
   /*******************************
    * UI templates for entities
    *******************************/
   const entitySchemas = {
-    'auth': { name: 'Auth' },
+    'auth': { name: 'Авторизация' },
     'age-group': {
-      name: 'Age groups',
+      name: 'Возрастные группы',
       path: '/api/age-group',
       createFields: [
         {k:'name', label:'Название', type:'text', required:true},
@@ -170,7 +243,7 @@
       hasStatus:false
     },
     'group': {
-      name:'Groups',
+      name:'Группы',
       path:'/api/group',
       createFields:[
         {k:'name',label:'Название',type:'text',required:true},
@@ -181,7 +254,7 @@
       }
     },
     'child': {
-      name:'Children',
+      name:'Дети',
       path:'/api/child',
       createFields:[
         {k:'firstName',label:'Имя',type:'text',required:true},
@@ -189,43 +262,42 @@
         {k:'patronymic',label:'Отчество',type:'text'},
         {k:'dateOfBirth',label:'Дата рождения',type:'date',required:true},
         {k:'group',label:'Group ID',type:'number'},
-        {k:'parentsId',label:'Parents IDs (comma sep)',type:'text'}
+        {k:'parentsId',label:'Parents IDs (через запятую)',type:'text'}
       ]
     },
     'parent': {
-      name:'Parents',
+      name:'Родители',
       path:'/api/parent',
       createFields:[
         {k:'firstName',label:'Имя',type:'text',required:true},
         {k:'lastName',label:'Фамилия',type:'text',required:true},
         {k:'patronymic',label:'Отчество',type:'text'},
-        // contactCreate nested object
-        {k:'contact.phoneNumber',label:'Phone (+996XXXXXXXXX)',type:'text',required:true},
-        {k:'contact.secondaryPhoneNumber',label:'Secondary phone',type:'text'},
-        {k:'contact.email',label:'Contact email',type:'email',required:true}
+        {k:'contact.phoneNumber',label:'Телефон (+996XXXXXXXXX)',type:'text',required:true},
+        {k:'contact.secondaryPhoneNumber',label:'Доп. телефон',type:'text'},
+        {k:'contact.email',label:'Email',type:'email',required:true}
       ],
       hasStatus:true,
       statusName:'role',
-      statusOptions:['FATHER','MOTHER','OTHER','PARENT','ADMIN','TEACHER'] // possible values; backend enum may differ
+      statusOptions:['FATHER','MOTHER','OTHER','PARENT','ADMIN','TEACHER']
     },
     'teacher': {
-      name:'Teachers',
+      name:'Воспитатели',
       path:'/api/teacher',
       createFields:[
         {k:'firstName',label:'Имя',type:'text',required:true},
         {k:'lastName',label:'Фамилия',type:'text',required:true},
         {k:'patronymic',label:'Отчество',type:'text'},
         {k:'dateOfBirth',label:'Дата рождения',type:'date',required:true},
-        {k:'contact.phoneNumber',label:'Phone (+996XXXXXXXXX)',type:'text',required:true},
-        {k:'contact.secondaryPhoneNumber',label:'Secondary phone',type:'text'},
-        {k:'contact.email',label:'Contact email',type:'email',required:true}
+        {k:'contact.phoneNumber',label:'Телефон (+996XXXXXXXXX)',type:'text',required:true},
+        {k:'contact.secondaryPhoneNumber',label:'Доп. телефон',type:'text'},
+        {k:'contact.email',label:'Email',type:'email',required:true}
       ],
       hasStatus:true,
       statusName:'position',
       statusOptions:['TEACHER','ASSISTANT','OTHER']
     },
     'payment': {
-      name:'Payments',
+      name:'Платежи',
       path:'/api/payment',
       createFields:[
         {k:'childId',label:'Child ID',type:'number',required:true},
@@ -237,12 +309,11 @@
       statusOptions:['MONTHLY','ONE_TIME']
     },
     'child-group-history': {
-      name:'Child Group History',
+      name:'История групп',
       path:'/api/child-group-history',
       createFields:[
         {k:'groupId',label:'Group ID',type:'number',required:true},
-        {k:'childId',label:'Child ID',type:'number',required:true},
-        // DTO for save only requires groupId, childId
+        {k:'childId',label:'Child ID',type:'number',required:true}
       ]
     }
   };
@@ -256,6 +327,7 @@
   async function renderEntity(key){
     panelContent.innerHTML = '';
     panelTitle.textContent = entitySchemas[key].name || key;
+    $('#panelHint').textContent = '';
 
     if(key === 'auth'){ renderAuth(); return; }
 
@@ -263,18 +335,22 @@
     const card = document.createElement('div');
     card.className = 'grid-two';
 
-    // LEFT: create form + special actions
+    // LEFT: create form + list
     const left = document.createElement('div');
-    left.innerHTML = `<div class="notice muted small">Endpoint: <code>${s.path}</code></div>`;
+    left.innerHTML = `<div class="notice muted small">📡 Endpoint: <code>${s.path}</code></div>`;
+    
     const createBox = document.createElement('div');
     createBox.className = 'card';
+    createBox.style.marginBottom = '20px';
+    createBox.innerHTML = '<h3 style="margin-bottom:16px;font-size:16px">➕ Создать новую запись</h3>';
     const f = document.createElement('form');
     f.className = 'row';
     f.id = key + '-create-form';
 
     s.createFields.forEach(fd=>{
-      const label = document.createElement('label'); label.className='field';
-      label.innerHTML = `<span class="small muted">${fd.label}${fd.required? ' *':''}</span>`;
+      const label = document.createElement('label'); 
+      label.className='field';
+      label.innerHTML = `<span>${fd.label}${fd.required? ' <span style="color:var(--danger)">*</span>':''}</span>`;
       const input = document.createElement('input');
       input.name = fd.k;
       input.type = fd.type || 'text';
@@ -282,54 +358,80 @@
       if(fd.max !== undefined) input.max = fd.max;
       if(fd.step) input.step = fd.step;
       if(fd.required) input.required = true;
+      if(fd.type === 'email') input.placeholder = 'example@email.com';
       label.appendChild(input);
       f.appendChild(label);
     });
-    // status selector if needed
+    
     if(s.hasStatus){
-      const label = document.createElement('label'); label.className='field';
-      label.innerHTML = `<span class="small muted">Status</span>`;
-      const sel = document.createElement('select'); sel.name = 'status';
-      s.statusOptions.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); });
+      const label = document.createElement('label'); 
+      label.className='field';
+      label.innerHTML = `<span>Статус</span>`;
+      const sel = document.createElement('select'); 
+      sel.name = 'status';
+      s.statusOptions.forEach(o=>{ 
+        const op=document.createElement('option'); 
+        op.value=o; 
+        op.textContent=o; 
+        sel.appendChild(op); 
+      });
       label.appendChild(sel);
       f.appendChild(label);
     }
-    const submit = document.createElement('button'); submit.className='btn'; submit.textContent='Create';
+    
+    const submit = document.createElement('button'); 
+    submit.className='btn'; 
+    submit.type = 'submit';
+    submit.textContent='➕ Создать';
     f.appendChild(submit);
     createBox.appendChild(f);
     left.appendChild(createBox);
 
     // list + controls
-    const listBox = document.createElement('div'); listBox.className='card';
-    const controlRow = document.createElement('div'); controlRow.className='flex';
-    controlRow.innerHTML = `<input id="${key}-query-id" placeholder="ID для поиска" style="padding:8px;border-radius:8px;border:none"/><button id="${key}-find" class="btn ghost">Find by ID</button>
-      <div style="margin-left:auto" class="flex"><input id="${key}-page" type="number" value="0" style="width:80px;padding:8px;border-radius:8px;border:none"/><input id="${key}-size" type="number" value="20" style="width:80px;padding:8px;border-radius:8px;border:none"/><button id="${key}-list" class="btn">Get list</button></div>`;
+    const listBox = document.createElement('div'); 
+    listBox.className='card';
+    listBox.innerHTML = '<h3 style="margin-bottom:16px;font-size:16px">📋 Список записей</h3>';
+    const controlRow = document.createElement('div'); 
+    controlRow.className='flex';
+    controlRow.style.marginBottom = '16px';
+    controlRow.innerHTML = `
+      <input id="${key}-query-id" placeholder="ID для поиска" style="flex:1;max-width:200px"/>
+      <button id="${key}-find" class="btn ghost">🔍 Найти</button>
+      <div style="margin-left:auto" class="flex">
+        <input id="${key}-page" type="number" value="0" style="width:80px" placeholder="Стр."/>
+        <input id="${key}-size" type="number" value="20" style="width:80px" placeholder="Размер"/>
+        <button id="${key}-list" class="btn">📄 Загрузить</button>
+      </div>`;
     listBox.appendChild(controlRow);
-    const tableWrap = document.createElement('div'); tableWrap.id = key + '-table';
+    const tableWrap = document.createElement('div'); 
+    tableWrap.id = key + '-table';
     listBox.appendChild(tableWrap);
     left.appendChild(listBox);
 
-    // RIGHT: helper / docs / special operations
+    // RIGHT: helper / docs
     const right = document.createElement('div');
     right.className = 'card';
-    right.innerHTML = `<div class="muted small">Инструкции:</div>
-      <ul class="small muted">
-        <li>Create — POST ${s.path}/create${s.hasStatus? '?status=...':''}</li>
-        <li>Update — PUT ${s.path}/update?id=&${s.hasStatus? 'status=&':''}delete=EXIST|DELETED</li>
-        <li>Delete — DELETE ${s.path}/delete?id=</li>
-        <li>List — GET ${s.path}/get-list?page=&size=</li>
-        <li>Find — GET ${s.path}/find-by-id?id=</li>
-      </ul>
+    right.innerHTML = `
+      <h3 style="margin-bottom:16px;font-size:16px">📖 Инструкции</h3>
+      <div class="muted small" style="line-height:1.8">
+        <div style="margin-bottom:12px"><strong>Create</strong> — POST ${s.path}/create${s.hasStatus? '?status=...':''}</div>
+        <div style="margin-bottom:12px"><strong>Update</strong> — PUT ${s.path}/update?id=&${s.hasStatus? 'status=&':''}delete=EXIST|DELETED</div>
+        <div style="margin-bottom:12px"><strong>Delete</strong> — DELETE ${s.path}/delete?id=</div>
+        <div style="margin-bottom:12px"><strong>List</strong> — GET ${s.path}/get-list?page=&size=</div>
+        <div><strong>Find</strong> — GET ${s.path}/find-by-id?id=</div>
+      </div>
     `;
-    // special group helper
+    
     if(key === 'group'){
-      const h = document.createElement('div'); h.style.marginTop='8px';
-      h.innerHTML = `<div class="small muted">Special: add teacher/assistant/child to group</div>
-        <div class="row" style="margin-top:6px">
-          <input id="grp-add-id" placeholder="group id" style="padding:8px;border-radius:8px;border:none"/>
-          <input id="grp-add-teach" placeholder="teacher/assistant id (optional)" style="padding:8px;border-radius:8px;border:none"/>
-          <input id="grp-add-child" placeholder="child id (optional)" style="padding:8px;border-radius:8px;border:none"/>
-          <button id="grp-add-btn" class="btn">Add</button>
+      const h = document.createElement('div'); 
+      h.style.marginTop='20px';
+      h.innerHTML = `
+        <div class="notice" style="margin-bottom:12px">Добавить учителя/помощника/ребёнка в группу</div>
+        <div class="row">
+          <input id="grp-add-id" placeholder="ID группы" style="flex:1"/>
+          <input id="grp-add-teach" placeholder="ID учителя (опц.)" style="flex:1"/>
+          <input id="grp-add-child" placeholder="ID ребёнка (опц.)" style="flex:1"/>
+          <button id="grp-add-btn" class="btn">➕ Добавить</button>
         </div>`;
       right.appendChild(h);
     }
@@ -342,38 +444,65 @@
     async function fetchList(){
       const page = $('#'+key+'-page').value || 0;
       const size = $('#'+key+'-size').value || 20;
+      const btn = $('#'+key+'-list');
+      btn.disabled = true;
+      btn.classList.add('loading');
       try{
         const url = apiUrl((s.path || '/') + '/get-list?page=' + page + '&size=' + size);
+        if(!url) return;
         const data = await fetchJson(url, { method:'GET' });
         renderTable(data);
+        showToast(`Загружено записей: ${Array.isArray(data) ? data.length : 0}`);
       }catch(err){
         console.error(err);
-        showNotice(err.data?.message || err.message || JSON.stringify(err), true);
+        showToast(err.message || 'Ошибка загрузки данных', 'error');
+        $('#'+key+'-table').innerHTML = '<div class="notice danger">Ошибка: ' + (err.message || 'Не удалось загрузить данные') + '</div>';
+      }finally{
+        btn.disabled = false;
+        btn.classList.remove('loading');
       }
     }
 
     async function findById(){
       const id = $('#'+key+'-query-id').value;
-      if(!id){ alert('Укажи ID'); return; }
+      if(!id){ showToast('Укажите ID', 'warning'); return; }
+      const btn = $('#'+key+'-find');
+      btn.disabled = true;
+      btn.classList.add('loading');
       try{
         const url = apiUrl((s.path || '/') + '/find-by-id?id=' + id);
+        if(!url) return;
         const data = await fetchJson(url, { method:'GET' });
         renderTable([data]);
-      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        showToast('Запись найдена');
+      }catch(err){ 
+        console.error(err); 
+        showToast(err.message || 'Запись не найдена', 'error');
+        $('#'+key+'-table').innerHTML = '<div class="notice danger">Ошибка: ' + (err.message || 'Запись не найдена') + '</div>';
+      }finally{
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
     }
 
     function renderTable(items){
       const wrap = $('#'+key+'-table');
       wrap.innerHTML = '';
-      if(!items || items.length === 0){ wrap.innerHTML = '<div class="muted small">Пусто</div>'; return; }
+      if(!items || items.length === 0){ 
+        wrap.innerHTML = '<div class="notice muted">Нет данных</div>'; 
+        return; 
+      }
       const table = document.createElement('table');
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
-      // gather columns from first item (and union)
       const cols = new Set();
       items.forEach(it => Object.keys(it || {}).forEach(k => cols.add(k)));
       const colArr = Array.from(cols);
-      colArr.forEach(c=>{ const th = document.createElement('th'); th.textContent = c; headerRow.appendChild(th); });
+      colArr.forEach(c=>{ 
+        const th = document.createElement('th'); 
+        th.textContent = c; 
+        headerRow.appendChild(th); 
+      });
       headerRow.appendChild(document.createElement('th'));
       thead.appendChild(headerRow);
       table.appendChild(thead);
@@ -385,17 +514,23 @@
           let v = item[c];
           if(v === null || v === undefined) td.textContent = '';
           else if(typeof v === 'object') {
-            // display short object summary
-            try{ td.textContent = JSON.stringify(v); }catch(e){ td.textContent = String(v); }
+            try{ td.textContent = JSON.stringify(v).substring(0, 100); }catch(e){ td.textContent = String(v); }
           } else td.textContent = v;
           tr.appendChild(td);
         });
         const tdA = document.createElement('td');
-        const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Edit';
-        const btnDelete = document.createElement('button'); btnDelete.className='btn ghost'; btnDelete.textContent='Delete';
+        const btnEdit = document.createElement('button'); 
+        btnEdit.className='btn ghost'; 
+        btnEdit.textContent='✏️';
+        btnEdit.style.padding = '6px 12px';
+        const btnDelete = document.createElement('button'); 
+        btnDelete.className='btn ghost danger'; 
+        btnDelete.textContent='🗑️';
+        btnDelete.style.padding = '6px 12px';
         btnEdit.addEventListener('click', ()=> openEdit(item));
         btnDelete.addEventListener('click', ()=> doDelete(item.id));
-        tdA.appendChild(btnEdit); tdA.appendChild(btnDelete);
+        tdA.appendChild(btnEdit); 
+        tdA.appendChild(btnDelete);
         tr.appendChild(tdA);
         tbody.appendChild(tr);
       });
@@ -404,10 +539,9 @@
     }
 
     function buildCreateBody(formData){
-      // construct nested objects for dotted keys, arrays for parentsId CSV etc.
       const body = {};
       for(const [k,v] of new FormData(formData).entries()){
-        if(k === 'status') continue; // status goes to query param
+        if(k === 'status') continue;
         if(k.includes('contact.')){
           const parts = k.split('.');
           body['contactCreate'] = body['contactCreate'] || {};
@@ -416,16 +550,12 @@
           const arr = v ? v.split(',').map(x=>{ const n = Number(x.trim()); return isNaN(n)? null : n; }).filter(x=>x!==null) : [];
           body['parentsId'] = arr;
         } else if(k === 'group' || k === 'groupId' || k === 'ageGroupId'){
-          // some DTOs expect field names group or ageGroupId
-          // keep numeric
           const num = Number(v); if(!isNaN(num)) body[k] = num; else body[k] = v;
         } else if(k === 'dateOfBirth'){
-          // DTO expects LocalDate string "yyyy-mm-dd"
           body[k] = v;
         } else if(k === 'paymentDate'){
-          // optionally allow datetime-local -> format
           body[k] = v;
-        } else if(k === 'childId' || k==='childId' || k==='paymentSum' || k==='ageGroup' || k==='price' || k==='childId'){
+        } else if(k === 'childId' || k==='paymentSum' || k==='ageGroup' || k==='price'){
           const num = Number(v); body[k] = isNaN(num) ? v : num;
         } else {
           body[k] = v;
@@ -436,64 +566,83 @@
 
     f.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
       const status = f.querySelector('[name="status"]') ? f.querySelector('[name="status"]').value : null;
       const body = buildCreateBody(f);
       try{
         let url = apiUrl(s.path + '/create');
+        if(!url) return;
         if(status) url += '?'+encodeURIComponent(s.statusName || 'status')+'='+encodeURIComponent(status);
         const data = await fetchJson(url, { method:'POST', body });
-        alert('Created: ' + (data?.id || 'OK'));
+        showToast('Запись успешно создана! ID: ' + (data?.id || 'OK'));
+        f.reset();
         fetchList();
       }catch(err){
         console.error(err);
-        alert(err.data?.message || err.message || JSON.stringify(err));
+        showToast(err.message || 'Ошибка создания записи', 'error');
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
       }
     });
 
     $('#'+key+'-list').addEventListener('click', fetchList);
     $('#'+key+'-find').addEventListener('click', findById);
+    $('#'+key+'-query-id').addEventListener('keypress', (e) => {
+      if(e.key === 'Enter') findById();
+    });
 
-    // group special
     if(key === 'group'){
       $('#grp-add-btn').addEventListener('click', async ()=>{
         const gid = $('#grp-add-id').value;
         const tid = $('#grp-add-teach').value;
         const cid = $('#grp-add-child').value;
-        if(!gid){ alert('Укажи group id'); return; }
+        if(!gid){ showToast('Укажите ID группы', 'warning'); return; }
+        const btn = $('#grp-add-btn');
+        btn.disabled = true;
+        btn.classList.add('loading');
         const params = new URLSearchParams();
         params.append('id', gid);
         if(tid) params.append('teacherOrAssistantId', tid);
         if(cid) params.append('childId', cid);
         try{
           const url = apiUrl('/api/group/add-teacher-assistant-child?' + params.toString());
+          if(!url) return;
           const data = await fetchJson(url, { method:'PUT' });
-          alert('Group updated');
+          showToast('Группа обновлена');
           fetchList();
-        }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+        }catch(err){ 
+          console.error(err); 
+          showToast(err.message || 'Ошибка обновления группы', 'error');
+        }finally{
+          btn.disabled = false;
+          btn.classList.remove('loading');
+        }
       });
     }
 
-    // open edit dialog -> use same DTO shape as create; send PUT to /update?id=..&status=..&delete=
     function openEdit(item){
-      // build modal contents: inputs for editable fields
-      const modal = $('#modal'); modal.classList.remove('hidden');
-      $('#modalTitle').textContent = 'Edit — id ' + item.id;
-      const body = $('#modalBody'); body.innerHTML = '';
+      const modal = $('#modal'); 
+      modal.classList.remove('hidden');
+      $('#modalTitle').textContent = 'Редактирование — ID ' + item.id;
+      const body = $('#modalBody'); 
+      body.innerHTML = '';
       const fields = s.createFields;
       const inputs = {};
       fields.forEach(fd=>{
-        const label = document.createElement('label'); label.className='field';
-        label.innerHTML = `<span class="small muted">${fd.label}</span>`;
+        const label = document.createElement('label'); 
+        label.className='field';
+        label.innerHTML = `<span>${fd.label}</span>`;
         const input = document.createElement('input');
         input.type = fd.type || 'text';
         input.name = fd.k;
-        // set value from item (support nested contact or children)
         let value = '';
         if(fd.k.includes('contact.')){
           const parts = fd.k.split('.');
           value = item.contact ? item.contact[parts[1]] ?? '' : '';
         } else if(fd.k === 'parentsId'){
-          // show as comma separated numbers
           if(Array.isArray(item.parents)) value = item.parents.map(p => p.id ?? p).join(',');
           else value = (item.parentsId || '') + '';
         } else {
@@ -505,27 +654,45 @@
         body.appendChild(label);
         inputs[fd.k] = input;
       });
-      // status if applicable
+      
       let statusInput = null;
       if(s.hasStatus){
-        const label = document.createElement('label'); label.className='field';
-        label.innerHTML = `<span class="small muted">Status</span>`;
-        const sel = document.createElement('select'); sel.name = 'status';
-        s.statusOptions.forEach(o=>{ const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); });
-        label.appendChild(sel); body.appendChild(label);
+        const label = document.createElement('label'); 
+        label.className='field';
+        label.innerHTML = `<span>Статус</span>`;
+        const sel = document.createElement('select'); 
+        sel.name = 'status';
+        s.statusOptions.forEach(o=>{ 
+          const op = document.createElement('option'); 
+          op.value=o; 
+          op.textContent=o; 
+          if(item[s.statusName] === o) op.selected = true;
+          sel.appendChild(op); 
+        });
+        label.appendChild(sel); 
+        body.appendChild(label);
         statusInput = sel;
       }
-      // delete select
-      const labelDel = document.createElement('label'); labelDel.className='field';
-      labelDel.innerHTML = `<span class="small muted">Delete flag</span>`;
-      const selDel = document.createElement('select'); selDel.name='delete';
-      ['EXIST','DELETED'].forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; selDel.appendChild(op); });
-      labelDel.appendChild(selDel); body.appendChild(labelDel);
+      
+      const labelDel = document.createElement('label'); 
+      labelDel.className='field';
+      labelDel.innerHTML = `<span>Статус удаления</span>`;
+      const selDel = document.createElement('select'); 
+      selDel.name='delete';
+      ['EXIST','DELETED'].forEach(o=>{ 
+        const op=document.createElement('option'); 
+        op.value=o; 
+        op.textContent=o; 
+        selDel.appendChild(op); 
+      });
+      labelDel.appendChild(selDel); 
+      body.appendChild(labelDel);
 
-      // handlers
       $('#modalCancel').onclick = ()=> { modal.classList.add('hidden'); body.innerHTML=''; };
       $('#modalSave').onclick = async ()=>{
-        // collect body similar to create
+        const btn = $('#modalSave');
+        btn.disabled = true;
+        btn.classList.add('loading');
         const formData = new FormData();
         for(const k in inputs) formData.set(k, inputs[k].value);
         if(statusInput) formData.set('status', statusInput.value);
@@ -534,98 +701,124 @@
         const id = item.id;
         try{
           let url = apiUrl(s.path + '/update?id=' + encodeURIComponent(id) + '&delete=' + encodeURIComponent(deleteFlag));
+          if(!url) return;
           if(s.hasStatus){
             const qn = s.statusName || 'status';
             url += '&' + encodeURIComponent(qn) + '=' + encodeURIComponent(formData.get('status') || '');
           }
           const data = await fetchJson(url, { method:'PUT', body: bodyToSend });
-          alert('Updated');
+          showToast('Запись обновлена');
           modal.classList.add('hidden');
           fetchList();
         }catch(err){
           console.error(err);
-          alert(err.data?.message || err.message || JSON.stringify(err));
+          showToast(err.message || 'Ошибка обновления', 'error');
+        }finally{
+          btn.disabled = false;
+          btn.classList.remove('loading');
         }
       };
     }
 
     async function doDelete(id){
-      if(!confirm('Удалить запись ID ' + id + ' ?')) return;
+      if(!confirm('Удалить запись ID ' + id + '?')) return;
       try{
         const url = apiUrl(s.path + '/delete?id=' + encodeURIComponent(id));
+        if(!url) return;
         const data = await fetchJson(url, { method:'DELETE' });
-        alert('Deleted');
+        showToast('Запись удалена');
         fetchList();
       }catch(err){
         console.error(err);
-        alert(err.data?.message || err.message || JSON.stringify(err));
+        showToast(err.message || 'Ошибка удаления', 'error');
       }
     }
 
-    // initial list load
     fetchList();
   }
 
   /*******************************
-   * Auth UI (custom)
+   * Auth UI
    *******************************/
   function renderAuth(){
     panelContent.innerHTML = '';
+    panelTitle.textContent = 'Авторизация';
+    $('#panelHint').textContent = 'Войдите в систему или зарегистрируйтесь';
+    
     const box = document.createElement('div');
     box.className = 'grid-two';
 
     // left: login/register
     const left = document.createElement('div');
-    const loginCard = document.createElement('div'); loginCard.className='card';
-    loginCard.innerHTML = `<h3>Login</h3>
+    const loginCard = document.createElement('div'); 
+    loginCard.className='card';
+    loginCard.style.marginBottom = '20px';
+    loginCard.innerHTML = `
+      <h3 style="margin-bottom:16px;font-size:18px">🔐 Вход в систему</h3>
       <form id="loginFormLocal" class="row">
-        <label class="field"><span class="small muted">Username</span><input name="username" required /></label>
-        <label class="field"><span class="small muted">Password</span><input name="password" type="password" required /></label>
-        <div class="actions"><button class="btn" type="submit">Login</button><button class="btn ghost" id="logoutBtn" type="button">Logout</button></div>
-      </form>`;
+        <label class="field"><span>Имя пользователя <span style="color:var(--danger)">*</span></span><input name="username" required placeholder="admin" /></label>
+        <label class="field"><span>Пароль <span style="color:var(--danger)">*</span></span><input name="password" type="password" required placeholder="••••••••" /></label>
+        <div class="actions"><button class="btn" type="submit">Войти</button><button class="btn ghost" id="logoutBtn" type="button">Выйти</button></div>
+      </form>
+    `;
     left.appendChild(loginCard);
 
-    const regCard = document.createElement('div'); regCard.className='card';
-    regCard.innerHTML = `<h3>Register</h3>
+    const regCard = document.createElement('div'); 
+    regCard.className='card';
+    regCard.innerHTML = `
+      <h3 style="margin-bottom:16px;font-size:18px">📝 Регистрация</h3>
       <form id="regFormLocal" class="row">
-        <label class="field"><span class="small muted">Username</span><input name="username" required /></label>
-        <label class="field"><span class="small muted">Password</span><input name="password" type="password" required /></label>
-        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
-        <div class="actions"><button class="btn" type="submit">Register</button></div>
+        <label class="field"><span>Имя пользователя <span style="color:var(--danger)">*</span></span><input name="username" required placeholder="user123" /></label>
+        <label class="field"><span>Пароль <span style="color:var(--danger)">*</span></span><input name="password" type="password" required minlength="6" placeholder="Минимум 6 символов" /></label>
+        <label class="field"><span>Email <span style="color:var(--danger)">*</span></span><input name="email" type="email" required placeholder="user@example.com" /></label>
+        <div class="actions"><button class="btn" type="submit">Зарегистрироваться</button></div>
       </form>
-      <div class="muted small" style="margin-top:8px">По умолчанию роль PARENT на бекенде.</div>`;
+      <div class="notice muted small" style="margin-top:12px">По умолчанию назначается роль PARENT</div>
+    `;
     left.appendChild(regCard);
 
     // right: forgot/reset
     const right = document.createElement('div');
-    const forgotCard = document.createElement('div'); forgotCard.className='card';
-    forgotCard.innerHTML = `<h3>Забыли пароль?</h3>
+    const forgotCard = document.createElement('div'); 
+    forgotCard.className='card';
+    forgotCard.style.marginBottom = '20px';
+    forgotCard.innerHTML = `
+      <h3 style="margin-bottom:16px;font-size:18px">🔑 Забыли пароль?</h3>
       <form id="forgotFormLocal" class="row">
-        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required placeholder="your@email.com" /></label>
+        <label class="field"><span>Email <span style="color:var(--danger)">*</span></span><input name="email" type="email" required placeholder="your@email.com" /></label>
         <div class="actions"><button class="btn" type="submit">Отправить код</button></div>
       </form>
-      <div id="resetCodeDisplay" style="display:none; margin-top:12px; padding:12px; background:rgba(124,58,237,0.1); border-radius:8px; border:1px solid var(--accent);">
-        <div class="small muted">Код восстановления отправлен!</div>
-        <div style="margin-top:8px; font-size:18px; font-weight:bold; color:var(--accent); letter-spacing:4px; text-align:center;" id="resetCodeValue"></div>
-        <div class="small muted" style="margin-top:8px; text-align:center;">Код действителен 10 минут</div>
-        <div class="small muted" style="margin-top:4px; text-align:center;">Также проверьте логи сервера и почту</div>
-      </div>`;
-    const resetCard = document.createElement('div'); resetCard.className='card';
-    resetCard.innerHTML = `<h3>Сброс пароля</h3>
+      <div id="resetCodeDisplay" class="code-display hidden">
+        <div class="small muted">✅ Код восстановления отправлен!</div>
+        <div class="code" id="resetCodeValue"></div>
+        <div class="small muted" style="margin-top:8px">⏰ Код действителен 10 минут</div>
+        <div class="small muted">📧 Также проверьте почту и логи сервера</div>
+      </div>
+    `;
+    
+    const resetCard = document.createElement('div'); 
+    resetCard.className='card';
+    resetCard.innerHTML = `
+      <h3 style="margin-bottom:16px;font-size:18px">🔄 Сброс пароля</h3>
       <form id="resetFormLocal" class="row">
-        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required placeholder="your@email.com" /></label>
-        <label class="field"><span class="small muted">Код восстановления</span><input name="code" required placeholder="123456" maxlength="6" /></label>
-        <label class="field"><span class="small muted">Новый пароль</span><input name="newPassword" type="password" required minlength="3" /></label>
+        <label class="field"><span>Email <span style="color:var(--danger)">*</span></span><input name="email" type="email" required placeholder="your@email.com" /></label>
+        <label class="field"><span>Код восстановления <span style="color:var(--danger)">*</span></span><input name="code" required placeholder="123456" maxlength="6" pattern="[0-9]{6}" /></label>
+        <label class="field"><span>Новый пароль <span style="color:var(--danger)">*</span></span><input name="newPassword" type="password" required minlength="6" placeholder="Минимум 6 символов" /></label>
         <div class="actions"><button class="btn" type="submit">Сбросить пароль</button></div>
-      </form>`;
-    right.appendChild(forgotCard); right.appendChild(resetCard);
+      </form>
+    `;
+    right.appendChild(forgotCard); 
+    right.appendChild(resetCard);
 
-    box.appendChild(left); box.appendChild(right);
+    box.appendChild(left); 
+    box.appendChild(right);
     panelContent.appendChild(box);
 
     // attach events
     $('#logoutBtn').addEventListener('click', ()=>{
-      localStorage.removeItem('kg_token'); showUserInfo(); alert('Logged out');
+      localStorage.removeItem('kg_token'); 
+      showUserInfo(); 
+      showToast('Вы вышли из системы');
     });
 
     $('#loginFormLocal').addEventListener('submit', async (e)=>{
@@ -634,22 +827,26 @@
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
       submitBtn.textContent = 'Вход...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/login'), { method:'POST', body: { username: fd.get('username'), password: fd.get('password') }});
+        const url = apiUrl('/api/auth/login');
+        if(!url) return;
+        const data = await fetchJson(url, { method:'POST', body: { username: fd.get('username'), password: fd.get('password') }});
         if(data && data.token){ 
           localStorage.setItem('kg_token', data.token); 
           showUserInfo(); 
-          alert('Успешный вход!');
+          showToast('Успешный вход!');
           e.target.reset();
         }
-        else alert('Ошибка: ' + JSON.stringify(data));
+        else showToast('Ошибка: неверный ответ сервера', 'error');
       }catch(err){ 
         console.error(err); 
         const errorMsg = err.data?.message || err.message || 'Ошибка входа';
-        alert('Ошибка: ' + errorMsg);
+        showToast(errorMsg, 'error');
       }finally{
         submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
         submitBtn.textContent = originalText;
       }
     });
@@ -661,27 +858,31 @@
       const password = fd.get('password');
       const email = fd.get('email');
       if(!username || !password || !email) {
-        alert('Заполните все поля');
+        showToast('Заполните все поля', 'warning');
         return;
       }
-      if(password.length < 3) {
-        alert('Пароль должен быть не менее 3 символов');
+      if(password.length < 6) {
+        showToast('Пароль должен быть не менее 6 символов', 'warning');
         return;
       }
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
       submitBtn.textContent = 'Регистрация...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/register'), { method:'POST', body: { username: username, password: password, email: email }});
-        alert(data.message || 'Регистрация успешна! Теперь вы можете войти.');
+        const url = apiUrl('/api/auth/register');
+        if(!url) return;
+        const data = await fetchJson(url, { method:'POST', body: { username: username, password: password, email: email }});
+        showToast(data.message || 'Регистрация успешна! Теперь вы можете войти.');
         e.target.reset();
       }catch(err){ 
         console.error(err); 
         const errorMsg = err.data?.message || err.message || 'Ошибка регистрации';
-        alert('Ошибка: ' + errorMsg);
+        showToast(errorMsg, 'error');
       }finally{
         submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
         submitBtn.textContent = originalText;
       }
     });
@@ -690,44 +891,42 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const email = fd.get('email');
-      if(!email) { alert('Введите email'); return; }
+      if(!email) { 
+        showToast('Введите email', 'warning'); 
+        return; 
+      }
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
       submitBtn.textContent = 'Отправка...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/forgot-password'), { method:'POST', body: { email: email }});
-        // Показываем код в UI
+        const url = apiUrl('/api/auth/forgot-password');
+        if(!url) return;
+        const data = await fetchJson(url, { method:'POST', body: { email: email }});
         if(data.code) {
           const codeDisplay = $('#resetCodeDisplay');
           const codeValue = $('#resetCodeValue');
           if(codeDisplay && codeValue) {
             codeValue.textContent = data.code;
-            codeDisplay.style.display = 'block';
-            // Автоматически копируем код в поле формы сброса
+            codeDisplay.classList.remove('hidden');
             const resetCodeInput = document.querySelector('#resetFormLocal input[name="code"]');
             const resetEmailInput = document.querySelector('#resetFormLocal input[name="email"]');
             if(resetCodeInput) resetCodeInput.value = data.code;
             if(resetEmailInput) resetEmailInput.value = email;
           }
         }
-        // Показываем также в alert для надёжности
-        let msg = data.message || 'Код отправлен';
-        if(data.code) {
-          msg += '\n\nКод восстановления: ' + data.code;
-        }
-        alert(msg);
-        // Логируем в консоль
+        showToast(data.message || 'Код отправлен! Проверьте почту и логи сервера.');
         if(data.code) console.log('Код восстановления для ' + email + ': ' + data.code);
       }catch(err){ 
         console.error(err); 
         const errorMsg = err.data?.message || err.message || 'Ошибка при отправке кода';
-        alert('Ошибка: ' + errorMsg);
-        // Скрываем блок с кодом при ошибке
+        showToast(errorMsg, 'error');
         const codeDisplay = $('#resetCodeDisplay');
-        if(codeDisplay) codeDisplay.style.display = 'none';
+        if(codeDisplay) codeDisplay.classList.add('hidden');
       }finally{
         submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
         submitBtn.textContent = originalText;
       }
     });
@@ -739,15 +938,22 @@
       const code = fd.get('code');
       const newPassword = fd.get('newPassword');
       if(!email || !code || !newPassword) { 
-        alert('Заполните все поля'); 
+        showToast('Заполните все поля', 'warning'); 
         return; 
       }
-      if(newPassword.length < 3) {
-        alert('Пароль должен быть не менее 3 символов');
+      if(newPassword.length < 6) {
+        showToast('Пароль должен быть не менее 6 символов', 'warning');
         return;
       }
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+      submitBtn.textContent = 'Сброс...';
       try{
-        const data = await fetchJson(apiUrl('/api/auth/reset-password'), { 
+        const url = apiUrl('/api/auth/reset-password');
+        if(!url) return;
+        const data = await fetchJson(url, { 
           method:'POST', 
           body: { 
             email: email, 
@@ -755,13 +961,17 @@
             newPassword: newPassword 
           }
         });
-        alert(data.message || 'Пароль успешно изменён! Теперь вы можете войти с новым паролем.');
-        // Очищаем форму после успешного сброса
+        showToast(data.message || 'Пароль успешно изменён! Теперь вы можете войти с новым паролем.');
         e.target.reset();
+        $('#resetCodeDisplay').classList.add('hidden');
       }catch(err){ 
         console.error(err); 
         const errorMsg = err.data?.message || err.message || 'Ошибка при сбросе пароля';
-        alert('Ошибка: ' + errorMsg + '\n\nПроверьте:\n- Правильность email\n- Правильность кода\n- Код не истёк (действителен 10 минут)');
+        showToast(errorMsg + '\n\nПроверьте:\n• Правильность email\n• Правильность кода\n• Код не истёк (10 минут)', 'error');
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = originalText;
       }
     });
   }
@@ -770,7 +980,6 @@
    * Menu wiring
    *******************************/
   function switchTo(key){
-    // set active
     $$('#menu button').forEach(b => b.classList.toggle('active', b.dataset.key === key));
     if(key === 'auth') renderAuth();
     else renderEntity(key);
@@ -783,7 +992,17 @@
   renderAuth();
 
   // modal close on backdrop click
-  $('#modal').addEventListener('click', (ev)=> { if(ev.target === $('#modal')) $('#modal').classList.add('hidden'); });
+  $('#modal').addEventListener('click', (ev)=> { 
+    if(ev.target === $('#modal')) $('#modal').classList.add('hidden'); 
+  });
+
+  // Сохраняем API base в localStorage
+  const apiBaseInput = $('#apiBase');
+  const savedApiBase = localStorage.getItem('apiBase');
+  if(savedApiBase) apiBaseInput.value = savedApiBase;
+  apiBaseInput.addEventListener('change', () => {
+    localStorage.setItem('apiBase', apiBaseInput.value);
+  });
 
   </script>
 </body>
