@@ -85,6 +85,36 @@
           </div>
         </section>
 
+  <!-- Added missing DTO-based forms -->
+  <section id="agegroup-forms">
+    <h2>Age Group</h2>
+    <form id="agegroup-form">
+      <label>Name <input name="name" required /></label>
+      <label>Age Group (1-7) <input name="ageGroup" type="number" min="1" max="7" required /></label>
+      <label>Price <input name="price" type="number" step="0.01" required /></label>
+      <button type="submit">Create Age Group</button>
+    </form>
+  </section>
+
+  <section id="child-group-history-forms">
+    <h2>Child Group History</h2>
+    <form id="child-group-history-form">
+      <label>Group ID <input name="groupId" type="number" required /></label>
+      <label>Child ID <input name="childId" type="number" required /></label>
+      <button type="submit">Create History</button>
+    </form>
+  </section>
+
+  <section id="contact-forms">
+    <h2>Contact</h2>
+    <form id="contact-form">
+      <label>Phone Number <input name="phoneNumber" required /></label>
+      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
+      <label>Email <input name="email" type="email" required /></label>
+      <button type="submit">Validate Contact</button>
+    </form>
+  </section>
+
         <footer>
           <div>Сделано автоматически. Сохраните файл как <code>index.html</code> и откройте в браузере. Для работы с backend убедитесь, что фронтенд и backend доступны по одному origin или backend поддерживает CORS. Токен хранится в localStorage под ключом <code>kg_token</code>.</div>
         </footer>
@@ -416,5 +446,63 @@
 
     setUserInfo(); renderAuth();
   </script>
+  <!-- Added extended CRUD forms based on backend models -->
+  <section id="extended-model-forms">
+    <h2>Extended Model Fields</h2>
+    <h3>Child</h3>
+    <form id="child-extended-form">
+      <label>First Name <input name="firstName" /></label>
+      <label>Last Name <input name="lastName" /></label>
+      <label>Patronymic <input name="patronymic" /></label>
+      <label>Date of Birth <input name="dateOfBirth" type="date" /></label>
+      <label>Group ID <input name="groupId" type="number" /></label>
+      <label>Parent IDs (comma separated) <input name="parentIds" /></label>
+      <button type="submit">Create Child (Extended)</button>
+    </form>
+
+    <h3>Parent</h3>
+    <form id="parent-extended-form">
+      <label>First Name <input name="firstName" /></label>
+      <label>Last Name <input name="lastName" /></label>
+      <label>Patronymic <input name="patronymic" /></label>
+      <label>Role <input name="role" /></label>
+      <label>Phone Number <input name="phoneNumber" /></label>
+      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
+      <label>Email <input name="email" /></label>
+      <button type="submit">Create Parent (Extended)</button>
+    </form>
+
+    <h3>Teacher</h3>
+    <form id="teacher-extended-form">
+      <label>First Name <input name="firstName" /></label>
+      <label>Last Name <input name="lastName" /></label>
+      <label>Patronymic <input name="patronymic" /></label>
+      <label>Position <input name="position" /></label>
+      <label>Date of Birth <input name="dateOfBirth" type="date" /></label>
+      <label>Phone Number <input name="phoneNumber" /></label>
+      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
+      <label>Email <input name="email" /></label>
+      <button type="submit">Create Teacher (Extended)</button>
+    </form>
+
+    <h3>Payment</h3>
+    <form id="payment-extended-form">
+      <label>Child ID <input name="childId" type="number" /></label>
+      <label>Payment Sum <input name="paymentSum" type="number" step="0.01" /></label>
+      <label>Payment Date <input name="paymentDate" type="datetime-local" /></label>
+      <label>Period <input name="period" /></label>
+      <label>Payment Type <input name="paymentType" /></label>
+      <button type="submit">Create Payment (Extended)</button>
+    </form>
+
+    <h3>Group</h3>
+    <form id="group-extended-form">
+      <label>Name <input name="name" /></label>
+      <label>Age Group ID <input name="ageGroupId" type="number" /></label>
+      <label>Teacher ID <input name="teacherId" type="number" /></label>
+      <label>Assistant ID <input name="assistantId" type="number" /></label>
+      <button type="submit">Create Group (Extended)</button>
+    </form>
+  </section>
 </body>
 </html>
