@@ -1,508 +1,684 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kindergarten Admin — Frontend</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Kindergarten Admin — Single File Frontend</title>
   <style>
-    /* Simple modern CSS — feel free to tweak */
+    /* Modern, clean admin look */
     :root{
-      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7c3aed; --glass: rgba(255,255,255,0.03);
-      --success: #16a34a; --danger:#ef4444; --soft:#111827;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      --bg:#0f1724; --surface:#0b1220; --muted:#9aa4b2; --accent:#7c3aed; --glass: rgba(255,255,255,0.03);
+      --card-bg: #0b1220; --card-2: #071733; --success: #16a34a; --danger:#ef4444;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    html,body{height:100%;}
-    body{margin:0;background:linear-gradient(180deg,#071127 0%, #071733 60%); color:#e6eef8;}
-    .app{max-width:1100px;margin:28px auto;padding:24px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7);}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-    header h1{font-size:20px;margin:0}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071127 0%, #071733 60%);color:#e6eef8}
+    .wrap{max-width:1200px;margin:28px auto;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.7)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    header h1{margin:0;font-size:20px}
     .controls{display:flex;gap:8px;align-items:center}
-    button, .btn{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .token{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);font-size:13px}
+    .btn{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:white;cursor:pointer}
     .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .nav{display:flex;gap:8px;flex-wrap:wrap}
-    .card{background:var(--card);padding:16px;border-radius:10px;margin-bottom:16px}
-    .grid{display:grid;grid-template-columns:260px 1fr;gap:16px}
-    nav.sidebar{position:sticky;top:24px}
-    .menu{display:flex;flex-direction:column;gap:8px}
-    .menu button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);text-align:left;padding:10px;border-radius:8px}
-    .menu button.active{border-color:var(--accent);color:white;box-shadow:0 4px 20px rgba(124,58,237,0.15)}
-    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-    form.row{display:flex;gap:8px;flex-wrap:wrap}
-    input, select, textarea{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;color:inherit;min-width:160px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-top:18px}
+    nav.card, section.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px}
+    nav .menu{display:flex;flex-direction:column;gap:8px}
+    nav .menu button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px;border-radius:8px;text-align:left;cursor:pointer}
+    nav .menu button.active{border-color:var(--accent);color:white;box-shadow:0 4px 20px rgba(124,58,237,0.15)}
+    section.card{min-height:380px}
+    .grid-two{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    form.row{display:flex;flex-wrap:wrap;gap:10px}
+    label.field{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
+    input, select, textarea{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit;min-width:160px}
+    .actions{display:flex;gap:8px;align-items:center}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;text-align:left}
     .muted{color:var(--muted);font-size:13px}
-    .small{font-size:13px}
-    .top-actions{display:flex;gap:8px;align-items:center}
-    .notice{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);margin-bottom:8px}
-    .hidden{display:none}
-    .form-inline{display:flex;gap:8px;align-items:center}
+    .notice{padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px;color:var(--muted)}
+    .danger{background:linear-gradient(90deg,#8b1e1e,#ef4444)}
     footer{margin-top:12px;color:var(--muted);font-size:13px}
-    .token-badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-size:12px}
-    .danger{background:linear-gradient(90deg,#8b1e1e,#ef4444);}
+    .small{font-size:12px;color:var(--muted)}
+    .flex{display:flex;gap:8px;align-items:center}
+    .right{margin-left:auto}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03)}
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:50}
+    .modal .box{background:var(--card-bg);padding:18px;border-radius:10px;width:720px;max-width:95%}
+    .hidden{display:none}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.grid-two{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <header>
-      <h1>Kindergarten Admin — Фронтенд</h1>
+      <div>
+        <h1>Kindergarten Admin Panel</h1>
+        <div class="small muted">Frontend (single file). Укажи API Base — например <code>http://localhost:8080</code></div>
+      </div>
       <div class="controls">
-        <div class="token-badge" id="userInfo">Не авторизован</div>
-        <div class="nav">
-          <button id="btnLogin" class="btn ghost">Войти</button>
-          <button id="btnRegister" class="btn ghost">Регистрация</button>
-        </div>
+        <input id="apiBase" placeholder="API base (http://localhost:8080)" value="http://localhost:8080" style="padding:8px;border-radius:8px;border:none"/>
+        <div class="token" id="userInfo">Не авторизован</div>
+        <button class="btn ghost" id="btnShowAuth">Auth</button>
       </div>
     </header>
 
-    <div class="grid">
-      <nav class="sidebar card">
-        <div class="menu" id="entityMenu">
-          <button data-entity="auth" class="active">Auth (login/register)</button>
-          <button data-entity="age-group">Age Groups</button>
-          <button data-entity="child">Children</button>
-          <button data-entity="group">Groups</button>
-          <button data-entity="parent">Parents</button>
-          <button data-entity="teacher">Teachers</button>
-          <button data-entity="payment">Payments</button>
-          <button data-entity="child-group-history">Child Group History</button>
+    <div class="layout">
+      <nav class="card">
+        <div class="menu" id="menu">
+          <button data-key="auth" class="active">Auth</button>
+          <button data-key="age-group">Age Groups</button>
+          <button data-key="group">Groups</button>
+          <button data-key="child">Children</button>
+          <button data-key="parent">Parents</button>
+          <button data-key="teacher">Teachers</button>
+          <button data-key="payment">Payments</button>
+          <button data-key="child-group-history">Child Group History</button>
         </div>
       </nav>
 
       <main>
-        <section class="card" id="mainPanel">
-          <div class="section-title">
-            <h2 id="panelTitle">Auth</h2>
-            <div class="top-actions">
-              <label class="muted small">API:</label>
-              <input id="apiBase" placeholder="/" value="/" style="min-width:200px" />
-              <button id="btnRefresh" class="btn ghost">Обновить список</button>
+        <section class="card" id="panel">
+          <div class="section-header">
+            <div class="flex">
+              <h2 id="panelTitle">Auth</h2>
+              <div class="small muted" style="margin-left:12px" id="panelHint">Войдите, чтобы получить JWT</div>
             </div>
+            <div class="right small muted">Token stored to localStorage <code>kg_token</code></div>
           </div>
 
-          <div id="panelContent">
-            <!-- dynamic content injected here -->
+          <div id="panelContent" style="margin-top:12px">
+            <!-- Dynamic content -->
           </div>
+
+          <footer style="margin-top:12px">
+            <div class="muted small">Один файл. JWT используется в заголовке Authorization: Bearer &lt;token&gt;.</div>
+          </footer>
         </section>
-
-  <!-- Added missing DTO-based forms -->
-  <section id="agegroup-forms">
-    <h2>Age Group</h2>
-    <form id="agegroup-form">
-      <label>Name <input name="name" required /></label>
-      <label>Age Group (1-7) <input name="ageGroup" type="number" min="1" max="7" required /></label>
-      <label>Price <input name="price" type="number" step="0.01" required /></label>
-      <button type="submit">Create Age Group</button>
-    </form>
-  </section>
-
-  <section id="child-group-history-forms">
-    <h2>Child Group History</h2>
-    <form id="child-group-history-form">
-      <label>Group ID <input name="groupId" type="number" required /></label>
-      <label>Child ID <input name="childId" type="number" required /></label>
-      <button type="submit">Create History</button>
-    </form>
-  </section>
-
-  <section id="contact-forms">
-    <h2>Contact</h2>
-    <form id="contact-form">
-      <label>Phone Number <input name="phoneNumber" required /></label>
-      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
-      <label>Email <input name="email" type="email" required /></label>
-      <button type="submit">Validate Contact</button>
-    </form>
-  </section>
-
-        <footer>
-          <div>Сделано автоматически. Сохраните файл как <code>index.html</code> и откройте в браузере. Для работы с backend убедитесь, что фронтенд и backend доступны по одному origin или backend поддерживает CORS. Токен хранится в localStorage под ключом <code>kg_token</code>.</div>
-        </footer>
       </main>
     </div>
   </div>
 
-  <template id="authTemplate">
-    <div class="grid" style="grid-template-columns:1fr 1fr;gap:16px">
-      <div class="card">
-        <h3>Вход</h3>
-        <form id="loginForm" class="row">
-          <input name="username" placeholder="Username" required />
-          <input name="password" type="password" placeholder="Password" required />
-          <div class="form-inline">
-            <button class="btn" type="submit">Войти</button>
-            <button id="btnLogout" type="button" class="btn ghost">Выйти</button>
-            <button id="btnForgot" type="button" class="btn ghost">Забыл пароль</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3>Регистрация</h3>
-        <form id="registerForm" class="row">
-          <input name="firstName" placeholder="First name" required />
-          <input name="lastName" placeholder="Last name" required />
-          <input name="email" placeholder="Email" type="email" required />
-          <input name="username" placeholder="Username" required />
-          <input name="password" placeholder="Password" type="password" required />
-          <select name="role">
-            <option value="PARENT">PARENT</option>
-            <option value="ADMIN">ADMIN</option>
-          </select>
-          <button class="btn" type="submit">Зарегистрироваться</button>
-        </form>
+  <!-- Modal (used for edit) -->
+  <div id="modal" class="modal hidden">
+    <div class="box">
+      <h3 id="modalTitle">Edit</h3>
+      <div id="modalBody"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn ghost" id="modalCancel">Отмена</button>
+        <button class="btn" id="modalSave">Сохранить</button>
       </div>
     </div>
-
-    <div id="forgotPanel" class="card hidden">
-      <h3>Восстановление пароля</h3>
-      <form id="forgotForm" class="row">
-        <input name="email" placeholder="Email для отправки кода" required />
-        <button class="btn" type="submit">Отправить код</button>
-      </form>
-      <div class="muted small">Код придет в email или в ответе (dev). После получения кода используйте форму ниже.</div>
-
-      <form id="resetForm" class="row" style="margin-top:12px">
-        <input name="email" placeholder="Email" required />
-        <input name="code" placeholder="Код из письма" required />
-        <input name="newPassword" placeholder="Новый пароль" required />
-        <button class="btn" type="submit">Сбросить пароль</button>
-      </form>
-    </div>
-  </template>
-
-  <template id="entityTemplate">
-    <div>
-      <div class="notice" id="entityNotice"></div>
-      <div class="card">
-        <h3 id="entityName">Entity</h3>
-        <form id="createForm" class="row">
-          <!-- dynamic fields -->
-        </form>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <h3>Список</h3>
-        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
-          <input id="queryId" placeholder="ID для поиска" />
-          <button id="btnFindById" class="btn ghost">Найти по ID</button>
-          <label class="muted small">Page</label>
-          <input id="page" type="number" value="0" style="width:70px" />
-          <label class="muted small">Size</label>
-          <input id="size" type="number" value="20" style="width:70px" />
-          <button id="btnList" class="btn">Получить список</button>
-        </div>
-        <div id="listArea"></div>
-      </div>
-    </div>
-  </template>
+  </div>
 
   <script>
-    // Simple SPA-ish frontend for controllers provided
-    const apiBaseInput = document.getElementById('apiBase');
-    const panelContent = document.getElementById('panelContent');
-    const panelTitle = document.getElementById('panelTitle');
-    const entityMenu = document.getElementById('entityMenu');
-    const userInfo = document.getElementById('userInfo');
-    const btnLogin = document.getElementById('btnLogin');
-    const btnRegister = document.getElementById('btnRegister');
+  /*******************************
+   * Helper utils
+   *******************************/
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-    const templates = {
-      auth: document.getElementById('authTemplate'),
-      entity: document.getElementById('entityTemplate')
+  function apiUrl(path){
+    const base = (document.getElementById('apiBase').value || '').replace(/\/$/, '');
+    if(!path.startsWith('/')) path = '/' + path;
+    return base + path;
+  }
+
+  function authHeader(){
+    const t = localStorage.getItem('kg_token');
+    return t ? { 'Authorization': 'Bearer ' + t } : {};
+  }
+
+  async function fetchJson(url, opts = {}){
+    opts.headers = { ...(opts.headers||{}), 'Accept': 'application/json', ...authHeader() };
+    if(opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(opts.body);
     }
+    const res = await fetch(url, opts);
+    const text = await res.text().catch(()=>'');
+    let data = null;
+    try{ data = text ? JSON.parse(text) : null }catch(e){ data = text }
+    if(!res.ok) throw { status: res.status, data };
+    return data;
+  }
 
-    let currentEntity = 'auth';
+  function showUserInfo(){
+    const el = $('#userInfo');
+    const t = localStorage.getItem('kg_token');
+    if(t) el.textContent = 'Авторизован (token present)';
+    else el.textContent = 'Не авторизован';
+  }
 
-    function apiUrl(path){
-      const base = apiBaseInput.value.trim() || '/';
-      // normalize
-      return (base.endsWith('/') ? base.slice(0,-1) : base) + (path.startsWith('/')?path:path.replace(/^/,'/'));
-    }
+  function showNotice(msg, isError=false){
+    // simple alert for now; could render inside panel
+    if(isError) alert('Ошибка: ' + msg);
+    else { /* small toast */ console.log(msg); }
+  }
 
-    function authHeader(){
-      const token = localStorage.getItem('kg_token');
-      return token ? { 'Authorization': 'Bearer ' + token } : {};
-    }
-
-    function showNotice(msg, isError){
-      const n = document.getElementById('entityNotice');
-      if(n){n.textContent = msg; n.style.borderLeft = isError ? '4px solid var(--danger)' : '4px solid var(--accent)';}
-    }
-
-    function setUserInfo(){
-      const token = localStorage.getItem('kg_token');
-      if(token){userInfo.textContent = 'Авторизован — токен в localStorage';}
-      else userInfo.textContent = 'Не авторизован';
-    }
-
-    function clearMain(){ panelContent.innerHTML = ''; }
-
-    function renderAuth(){
-      clearMain();
-      panelTitle.textContent = 'Auth';
-      const node = templates.auth.content.cloneNode(true);
-      panelContent.appendChild(node);
-
-      const loginForm = document.getElementById('loginForm');
-      loginForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const fd = new FormData(loginForm);
-        const body = { username: fd.get('username'), password: fd.get('password') };
-        try{
-          const res = await fetch(apiUrl('/api/auth/login'), {
-            method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
-          });
-          const data = await res.json();
-          if(res.ok){ localStorage.setItem('kg_token', data.token); setUserInfo(); alert('Успешный вход'); }
-          else{ alert(data.message || JSON.stringify(data)); }
-        }catch(err){alert(err.message)}
-      });
-
-      const registerForm = document.getElementById('registerForm');
-      registerForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const fd = new FormData(registerForm);
-        const body = { firstName: fd.get('firstName'), lastName: fd.get('lastName'), email: fd.get('email'), username: fd.get('username'), password: fd.get('password') };
-        try{
-          const res = await fetch(apiUrl('/api/auth/register'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-          const data = await res.json();
-          if(res.ok) alert(data.message || 'OK'); else alert(data.message || JSON.stringify(data));
-        }catch(err){alert(err.message)}
-      });
-
-      document.getElementById('btnForgot').addEventListener('click', ()=>{
-        document.getElementById('forgotPanel').classList.toggle('hidden');
-      });
-
-      const forgotForm = document.getElementById('forgotForm');
-      forgotForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const fd = new FormData(forgotForm);
-        try{
-          const res = await fetch(apiUrl('/api/auth/forgot-password'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:fd.get('email')})});
-          const data = await res.json();
-          if(res.ok){ alert(data.message + (data.code ? '\nКод: ' + data.code : '')); }
-          else alert(data.message||JSON.stringify(data));
-        }catch(err){alert(err.message)}
-      });
-
-      const resetForm = document.getElementById('resetForm');
-      resetForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const fd = new FormData(resetForm);
-        try{
-          const res = await fetch(apiUrl('/api/auth/reset-password'), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:fd.get('email'), code:fd.get('code'), newPassword:fd.get('newPassword')})});
-          const data = await res.json();
-          if(res.ok) alert(data.message||'OK'); else alert(data.message||JSON.stringify(data));
-        }catch(err){alert(err.message)}
-      });
-
-      document.getElementById('btnLogout').addEventListener('click', ()=>{ localStorage.removeItem('kg_token'); setUserInfo(); alert('Вы вышли'); });
-    }
-
-    // Generic entity renderer using CRUDController conventions
-    const schemas = {
-      'age-group': {name:'Age Group', path:'/api/age-group', fields:[{k:'name',label:'Name'},{k:'minAge',label:'Min Age',type:'number'},{k:'maxAge',label:'Max Age',type:'number'}]},
-      'child': {name:'Child', path:'/api/child', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'parentId',label:'Parent ID',type:'number'}]},
-      'group': {name:'Group', path:'/api/group', fields:[{k:'name',label:'Name'},{k:'ageGroupId',label:'AgeGroup ID',type:'number'}]},
-      'parent': {name:'Parent', path:'/api/parent', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'email',label:'Email'},{k:'phone',label:'Phone'}], extraStatus:true, statusOptions:['PARENT','ADMIN','TEACHER']},
-      'teacher': {name:'Teacher', path:'/api/teacher', fields:[{k:'firstName',label:'First name'},{k:'lastName',label:'Last name'},{k:'email',label:'Email'}], extraStatus:true, statusOptions:['TEACHER','ASSISTANT','OTHER']},
-      'payment': {name:'Payment', path:'/api/payment', fields:[{k:'amount',label:'Amount',type:'number'},{k:'childId',label:'Child ID',type:'number'},{k:'month',label:'Month'}], extraStatus:true, statusOptions:['MONTHLY','ONE_TIME']},
-      'child-group-history': {name:'ChildGroupHistory', path:'/api/child-group-history', fields:[{k:'childId',label:'Child ID',type:'number'},{k:'groupId',label:'Group ID',type:'number'},{k:'startDate',label:'Start Date',type:'date'},{k:'endDate',label:'End Date',type:'date'}]}
-    };
-
-    async function renderEntity(entityKey){
-      clearMain();
-      currentEntity = entityKey;
-      panelTitle.textContent = schemas[entityKey].name || entityKey;
-      const node = templates.entity.content.cloneNode(true);
-      panelContent.appendChild(node);
-      document.getElementById('entityName').textContent = schemas[entityKey].name || entityKey;
-
-      const createForm = document.getElementById('createForm');
-      const path = schemas[entityKey].path;
-      // build fields
-      createForm.innerHTML = '';
-      schemas[entityKey].fields.forEach(f=>{
-        const input = document.createElement('input');
-        input.name = f.k; input.placeholder = f.label; input.required = true;
-        if(f.type) input.type = f.type; createForm.appendChild(input);
-      });
-      if(schemas[entityKey].extraStatus){
-        const sel = document.createElement('select'); sel.name = 'status';
-        schemas[entityKey].statusOptions.forEach(o=>{ const opt = document.createElement('option'); opt.value=o; opt.textContent=o; sel.appendChild(opt); })
-        createForm.appendChild(sel);
+  /*******************************
+   * UI templates for entities
+   *******************************/
+  const entitySchemas = {
+    'auth': { name: 'Auth' },
+    'age-group': {
+      name: 'Age groups',
+      path: '/api/age-group',
+      createFields: [
+        {k:'name', label:'Название', type:'text', required:true},
+        {k:'ageGroup', label:'Возраст (1-7)', type:'number', min:1, max:7, required:true},
+        {k:'price', label:'Цена', type:'number', step:'0.01', required:true}
+      ],
+      hasStatus:false
+    },
+    'group': {
+      name:'Groups',
+      path:'/api/group',
+      createFields:[
+        {k:'name',label:'Название',type:'text',required:true},
+        {k:'ageGroupId',label:'AgeGroup ID',type:'number',required:true}
+      ],
+      special:{
+        addTeacherAssistantChild: apiUrl.bind(null, '/api/group/add-teacher-assistant-child')
       }
-      const createBtn = document.createElement('button'); createBtn.className='btn'; createBtn.textContent='Создать'; createBtn.type='submit';
-      createForm.appendChild(createBtn);
+    },
+    'child': {
+      name:'Children',
+      path:'/api/child',
+      createFields:[
+        {k:'firstName',label:'Имя',type:'text',required:true},
+        {k:'lastName',label:'Фамилия',type:'text',required:true},
+        {k:'patronymic',label:'Отчество',type:'text'},
+        {k:'dateOfBirth',label:'Дата рождения',type:'date',required:true},
+        {k:'group',label:'Group ID',type:'number'},
+        {k:'parentsId',label:'Parents IDs (comma sep)',type:'text'}
+      ]
+    },
+    'parent': {
+      name:'Parents',
+      path:'/api/parent',
+      createFields:[
+        {k:'firstName',label:'Имя',type:'text',required:true},
+        {k:'lastName',label:'Фамилия',type:'text',required:true},
+        {k:'patronymic',label:'Отчество',type:'text'},
+        // contactCreate nested object
+        {k:'contact.phoneNumber',label:'Phone (+996XXXXXXXXX)',type:'text',required:true},
+        {k:'contact.secondaryPhoneNumber',label:'Secondary phone',type:'text'},
+        {k:'contact.email',label:'Contact email',type:'email',required:true}
+      ],
+      hasStatus:true,
+      statusName:'role',
+      statusOptions:['FATHER','MOTHER','OTHER','PARENT','ADMIN','TEACHER'] // possible values; backend enum may differ
+    },
+    'teacher': {
+      name:'Teachers',
+      path:'/api/teacher',
+      createFields:[
+        {k:'firstName',label:'Имя',type:'text',required:true},
+        {k:'lastName',label:'Фамилия',type:'text',required:true},
+        {k:'patronymic',label:'Отчество',type:'text'},
+        {k:'dateOfBirth',label:'Дата рождения',type:'date',required:true},
+        {k:'contact.phoneNumber',label:'Phone (+996XXXXXXXXX)',type:'text',required:true},
+        {k:'contact.secondaryPhoneNumber',label:'Secondary phone',type:'text'},
+        {k:'contact.email',label:'Contact email',type:'email',required:true}
+      ],
+      hasStatus:true,
+      statusName:'position',
+      statusOptions:['TEACHER','ASSISTANT','OTHER']
+    },
+    'payment': {
+      name:'Payments',
+      path:'/api/payment',
+      createFields:[
+        {k:'childId',label:'Child ID',type:'number',required:true},
+        {k:'paymentSum',label:'Сумма',type:'number',step:'0.01',required:true},
+        {k:'period',label:'Период MM.yyyy',type:'text',required:true}
+      ],
+      hasStatus:true,
+      statusName:'paymentType',
+      statusOptions:['MONTHLY','ONE_TIME']
+    },
+    'child-group-history': {
+      name:'Child Group History',
+      path:'/api/child-group-history',
+      createFields:[
+        {k:'groupId',label:'Group ID',type:'number',required:true},
+        {k:'childId',label:'Child ID',type:'number',required:true},
+        // DTO for save only requires groupId, childId
+      ]
+    }
+  };
 
-      createForm.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const fd = new FormData(createForm); const body = {};
-        schemas[entityKey].fields.forEach(f=> body[f.k]=fd.get(f.k));
-        const status = fd.get('status');
-        // POST to /create. For controllers with status, append ?status=...
-        let url = apiUrl(path + '/create');
-        if(status) url += '?status=' + encodeURIComponent(status);
-        try{
-          const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json', ...authHeader()}, body:JSON.stringify(body)});
-          const data = await res.json();
-          if(res.ok){ showNotice('Создано: ' + (data.id||'OK')); fetchList(); } else { showNotice(data.message||JSON.stringify(data), true); }
-        }catch(err){ showNotice(err.message,true); }
-      });
+  /*******************************
+   * Render panel content for entity
+   *******************************/
+  const panelContent = $('#panelContent');
+  const panelTitle = $('#panelTitle');
 
-      document.getElementById('btnList').addEventListener('click', fetchList);
-      document.getElementById('btnFindById').addEventListener('click', async ()=>{
-        const id = document.getElementById('queryId').value; if(!id){ alert('Введите ID'); return; }
-        try{
-          const res = await fetch(apiUrl(path + '/find-by-id?id=' + id), {headers:{...authHeader()}});
-          const data = await res.json();
-          if(res.ok){ renderList([data]); } else showNotice(data.message||JSON.stringify(data), true);
-        }catch(err){ showNotice(err.message,true); }
-      });
+  async function renderEntity(key){
+    panelContent.innerHTML = '';
+    panelTitle.textContent = entitySchemas[key].name || key;
 
-      async function fetchList(){
-        const page = document.getElementById('page').value || 0; const size = document.getElementById('size').value || 20;
-        try{
-          const res = await fetch(apiUrl(path + '/get-list?page=' + page + '&size=' + size), {headers:{...authHeader()}});
-          const data = await res.json();
-          if(res.ok){ renderList(data); } else showNotice(data.message||JSON.stringify(data), true);
-        }catch(err){ showNotice(err.message,true); }
+    if(key === 'auth'){ renderAuth(); return; }
+
+    const s = entitySchemas[key];
+    const card = document.createElement('div');
+    card.className = 'grid-two';
+
+    // LEFT: create form + special actions
+    const left = document.createElement('div');
+    left.innerHTML = `<div class="notice muted small">Endpoint: <code>${s.path}</code></div>`;
+    const createBox = document.createElement('div');
+    createBox.className = 'card';
+    const f = document.createElement('form');
+    f.className = 'row';
+    f.id = key + '-create-form';
+
+    s.createFields.forEach(fd=>{
+      const label = document.createElement('label'); label.className='field';
+      label.innerHTML = `<span class="small muted">${fd.label}${fd.required? ' *':''}</span>`;
+      const input = document.createElement('input');
+      input.name = fd.k;
+      input.type = fd.type || 'text';
+      if(fd.min !== undefined) input.min = fd.min;
+      if(fd.max !== undefined) input.max = fd.max;
+      if(fd.step) input.step = fd.step;
+      if(fd.required) input.required = true;
+      label.appendChild(input);
+      f.appendChild(label);
+    });
+    // status selector if needed
+    if(s.hasStatus){
+      const label = document.createElement('label'); label.className='field';
+      label.innerHTML = `<span class="small muted">Status</span>`;
+      const sel = document.createElement('select'); sel.name = 'status';
+      s.statusOptions.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); });
+      label.appendChild(sel);
+      f.appendChild(label);
+    }
+    const submit = document.createElement('button'); submit.className='btn'; submit.textContent='Create';
+    f.appendChild(submit);
+    createBox.appendChild(f);
+    left.appendChild(createBox);
+
+    // list + controls
+    const listBox = document.createElement('div'); listBox.className='card';
+    const controlRow = document.createElement('div'); controlRow.className='flex';
+    controlRow.innerHTML = `<input id="${key}-query-id" placeholder="ID для поиска" style="padding:8px;border-radius:8px;border:none"/><button id="${key}-find" class="btn ghost">Find by ID</button>
+      <div style="margin-left:auto" class="flex"><input id="${key}-page" type="number" value="0" style="width:80px;padding:8px;border-radius:8px;border:none"/><input id="${key}-size" type="number" value="20" style="width:80px;padding:8px;border-radius:8px;border:none"/><button id="${key}-list" class="btn">Get list</button></div>`;
+    listBox.appendChild(controlRow);
+    const tableWrap = document.createElement('div'); tableWrap.id = key + '-table';
+    listBox.appendChild(tableWrap);
+    left.appendChild(listBox);
+
+    // RIGHT: helper / docs / special operations
+    const right = document.createElement('div');
+    right.className = 'card';
+    right.innerHTML = `<div class="muted small">Инструкции:</div>
+      <ul class="small muted">
+        <li>Create — POST ${s.path}/create${s.hasStatus? '?status=...':''}</li>
+        <li>Update — PUT ${s.path}/update?id=&${s.hasStatus? 'status=&':''}delete=EXIST|DELETED</li>
+        <li>Delete — DELETE ${s.path}/delete?id=</li>
+        <li>List — GET ${s.path}/get-list?page=&size=</li>
+        <li>Find — GET ${s.path}/find-by-id?id=</li>
+      </ul>
+    `;
+    // special group helper
+    if(key === 'group'){
+      const h = document.createElement('div'); h.style.marginTop='8px';
+      h.innerHTML = `<div class="small muted">Special: add teacher/assistant/child to group</div>
+        <div class="row" style="margin-top:6px">
+          <input id="grp-add-id" placeholder="group id" style="padding:8px;border-radius:8px;border:none"/>
+          <input id="grp-add-teach" placeholder="teacher/assistant id (optional)" style="padding:8px;border-radius:8px;border:none"/>
+          <input id="grp-add-child" placeholder="child id (optional)" style="padding:8px;border-radius:8px;border:none"/>
+          <button id="grp-add-btn" class="btn">Add</button>
+        </div>`;
+      right.appendChild(h);
+    }
+
+    card.appendChild(left);
+    card.appendChild(right);
+    panelContent.appendChild(card);
+
+    // functions for list / find / create / edit / delete
+    async function fetchList(){
+      const page = $('#'+key+'-page').value || 0;
+      const size = $('#'+key+'-size').value || 20;
+      try{
+        const url = apiUrl((s.path || '/') + '/get-list?page=' + page + '&size=' + size);
+        const data = await fetchJson(url, { method:'GET' });
+        renderTable(data);
+      }catch(err){
+        console.error(err);
+        showNotice(err.data?.message || err.message || JSON.stringify(err), true);
       }
+    }
 
-      function renderList(items){
-        const area = document.getElementById('listArea'); area.innerHTML = '';
-        if(!items || items.length===0){ area.innerHTML='<div class="muted">Пусто</div>'; return; }
-        const table = document.createElement('table');
-        const thead = document.createElement('thead'); const headerRow = document.createElement('tr');
-        // collect columns
-        const cols = new Set(); items.forEach(it=> Object.keys(it||{}).forEach(k=>cols.add(k)));
-        const colArr = Array.from(cols);
-        colArr.forEach(c=>{ const th = document.createElement('th'); th.textContent = c; headerRow.appendChild(th); });
-        headerRow.appendChild(document.createElement('th'));
-        thead.appendChild(headerRow); table.appendChild(thead);
-        const tbody = document.createElement('tbody');
-        items.forEach(it=>{
-          const tr = document.createElement('tr');
-          colArr.forEach(c=>{ const td = document.createElement('td'); td.textContent = displayVal(it[c]); tr.appendChild(td); });
-          const tdActions = document.createElement('td');
-          const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Edit';
-          const btnDelete = document.createElement('button'); btnDelete.className='btn ghost'; btnDelete.textContent='Delete';
-          btnEdit.addEventListener('click', ()=> openEditModal(it));
-          btnDelete.addEventListener('click', ()=> doDelete(it.id));
-          tdActions.appendChild(btnEdit); tdActions.appendChild(btnDelete); tr.appendChild(tdActions);
-          tbody.appendChild(tr);
+    async function findById(){
+      const id = $('#'+key+'-query-id').value;
+      if(!id){ alert('Укажи ID'); return; }
+      try{
+        const url = apiUrl((s.path || '/') + '/find-by-id?id=' + id);
+        const data = await fetchJson(url, { method:'GET' });
+        renderTable([data]);
+      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+    }
+
+    function renderTable(items){
+      const wrap = $('#'+key+'-table');
+      wrap.innerHTML = '';
+      if(!items || items.length === 0){ wrap.innerHTML = '<div class="muted small">Пусто</div>'; return; }
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      // gather columns from first item (and union)
+      const cols = new Set();
+      items.forEach(it => Object.keys(it || {}).forEach(k => cols.add(k)));
+      const colArr = Array.from(cols);
+      colArr.forEach(c=>{ const th = document.createElement('th'); th.textContent = c; headerRow.appendChild(th); });
+      headerRow.appendChild(document.createElement('th'));
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      items.forEach(item=>{
+        const tr = document.createElement('tr');
+        colArr.forEach(c=>{
+          const td = document.createElement('td');
+          let v = item[c];
+          if(v === null || v === undefined) td.textContent = '';
+          else if(typeof v === 'object') {
+            // display short object summary
+            try{ td.textContent = JSON.stringify(v); }catch(e){ td.textContent = String(v); }
+          } else td.textContent = v;
+          tr.appendChild(td);
         });
-        table.appendChild(tbody); area.appendChild(table);
-      }
-
-      function displayVal(v){ if(v===null||v===undefined) return ''; if(typeof v==='object') return JSON.stringify(v); return v; }
-
-      function openEditModal(obj){
-        // simple prompt based edit
-        const updates = {};
-        schemas[entityKey].fields.forEach(f=>{
-          const val = prompt('Значение ' + f.label, obj[f.k]||'');
-          if(val!==null) updates[f.k]=val;
-        });
-        if(Object.keys(updates).length===0) return;
-        const deleteFlag = false; // for now
-        const params = new URLSearchParams(); params.append('id', obj.id);
-        if(schemas[entityKey].extraStatus){ const status = prompt('Статус (если нужно)', ''); if(status) params.append('status', status); }
-        params.append('delete', deleteFlag ? 'DELETED' : 'EXIST');
-        // PUT to /update?id=...&status=...&delete=...
-        fetch(apiUrl(path + '/update?' + params.toString()), {method:'PUT', headers:{'Content-Type':'application/json', ...authHeader()}, body:JSON.stringify(updates)}).then(r=>r.json()).then(d=>{ if(d) { showNotice('Обновлено'); fetchList(); } }).catch(e=>showNotice(e.message,true));
-      }
-
-      async function doDelete(id){ if(!confirm('Удалить ID ' + id + '?')) return; try{ const res = await fetch(apiUrl(path + '/delete?id=' + id), {method:'DELETE', headers:{...authHeader()}}); const data = await res.json(); if(res.ok){ showNotice('Удалено'); fetchList(); } else showNotice(data.message||JSON.stringify(data), true); }catch(err){showNotice(err.message,true);} }
-
-      // specific extra endpoints
-      if(entityKey==='group'){
-        const area = document.getElementById('listArea');
-        const helper = document.createElement('div'); helper.className='muted'; helper.textContent='Special: add teacher/assistant/child via /api/group/add-teacher-assistant-child'; area.prepend(helper);
-      }
-
-      // initial list
-      fetchList();
+        const tdA = document.createElement('td');
+        const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Edit';
+        const btnDelete = document.createElement('button'); btnDelete.className='btn ghost'; btnDelete.textContent='Delete';
+        btnEdit.addEventListener('click', ()=> openEdit(item));
+        btnDelete.addEventListener('click', ()=> doDelete(item.id));
+        tdA.appendChild(btnEdit); tdA.appendChild(btnDelete);
+        tr.appendChild(tdA);
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      wrap.appendChild(table);
     }
 
-    // wire menu
-    entityMenu.querySelectorAll('button').forEach(b=> b.addEventListener('click', (e)=>{
-      entityMenu.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-      e.target.classList.add('active');
-      const key = e.target.getAttribute('data-entity');
-      if(key==='auth') renderAuth(); else renderEntity(key);
-    }));
+    function buildCreateBody(formData){
+      // construct nested objects for dotted keys, arrays for parentsId CSV etc.
+      const body = {};
+      for(const [k,v] of new FormData(formData).entries()){
+        if(k === 'status') continue; // status goes to query param
+        if(k.includes('contact.')){
+          const parts = k.split('.');
+          body['contactCreate'] = body['contactCreate'] || {};
+          body['contactCreate'][parts[1]] = v;
+        } else if(k === 'parentsId'){
+          const arr = v ? v.split(',').map(x=>{ const n = Number(x.trim()); return isNaN(n)? null : n; }).filter(x=>x!==null) : [];
+          body['parentsId'] = arr;
+        } else if(k === 'group' || k === 'groupId' || k === 'ageGroupId'){
+          // some DTOs expect field names group or ageGroupId
+          // keep numeric
+          const num = Number(v); if(!isNaN(num)) body[k] = num; else body[k] = v;
+        } else if(k === 'dateOfBirth'){
+          // DTO expects LocalDate string "yyyy-mm-dd"
+          body[k] = v;
+        } else if(k === 'paymentDate'){
+          // optionally allow datetime-local -> format
+          body[k] = v;
+        } else if(k === 'childId' || k==='childId' || k==='paymentSum' || k==='ageGroup' || k==='price' || k==='childId'){
+          const num = Number(v); body[k] = isNaN(num) ? v : num;
+        } else {
+          body[k] = v;
+        }
+      }
+      return body;
+    }
 
-    // header quick buttons
-    btnLogin.addEventListener('click', ()=>{ entityMenu.querySelector('[data-entity="auth"]').click(); });
-    btnRegister.addEventListener('click', ()=>{ entityMenu.querySelector('[data-entity="auth"]').click(); });
-
-    document.getElementById('btnRefresh').addEventListener('click', ()=>{
-      // refresh current panel
-      if(currentEntity==='auth') renderAuth(); else renderEntity(currentEntity);
+    f.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const status = f.querySelector('[name="status"]') ? f.querySelector('[name="status"]').value : null;
+      const body = buildCreateBody(f);
+      try{
+        let url = apiUrl(s.path + '/create');
+        if(status) url += '?'+encodeURIComponent(s.statusName || 'status')+'='+encodeURIComponent(status);
+        const data = await fetchJson(url, { method:'POST', body });
+        alert('Created: ' + (data?.id || 'OK'));
+        fetchList();
+      }catch(err){
+        console.error(err);
+        alert(err.data?.message || err.message || JSON.stringify(err));
+      }
     });
 
-    setUserInfo(); renderAuth();
+    $('#'+key+'-list').addEventListener('click', fetchList);
+    $('#'+key+'-find').addEventListener('click', findById);
+
+    // group special
+    if(key === 'group'){
+      $('#grp-add-btn').addEventListener('click', async ()=>{
+        const gid = $('#grp-add-id').value;
+        const tid = $('#grp-add-teach').value;
+        const cid = $('#grp-add-child').value;
+        if(!gid){ alert('Укажи group id'); return; }
+        const params = new URLSearchParams();
+        params.append('id', gid);
+        if(tid) params.append('teacherOrAssistantId', tid);
+        if(cid) params.append('childId', cid);
+        try{
+          const url = apiUrl('/api/group/add-teacher-assistant-child?' + params.toString());
+          const data = await fetchJson(url, { method:'PUT' });
+          alert('Group updated');
+          fetchList();
+        }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+      });
+    }
+
+    // open edit dialog -> use same DTO shape as create; send PUT to /update?id=..&status=..&delete=
+    function openEdit(item){
+      // build modal contents: inputs for editable fields
+      const modal = $('#modal'); modal.classList.remove('hidden');
+      $('#modalTitle').textContent = 'Edit — id ' + item.id;
+      const body = $('#modalBody'); body.innerHTML = '';
+      const fields = s.createFields;
+      const inputs = {};
+      fields.forEach(fd=>{
+        const label = document.createElement('label'); label.className='field';
+        label.innerHTML = `<span class="small muted">${fd.label}</span>`;
+        const input = document.createElement('input');
+        input.type = fd.type || 'text';
+        input.name = fd.k;
+        // set value from item (support nested contact or children)
+        let value = '';
+        if(fd.k.includes('contact.')){
+          const parts = fd.k.split('.');
+          value = item.contact ? item.contact[parts[1]] ?? '' : '';
+        } else if(fd.k === 'parentsId'){
+          // show as comma separated numbers
+          if(Array.isArray(item.parents)) value = item.parents.map(p => p.id ?? p).join(',');
+          else value = (item.parentsId || '') + '';
+        } else {
+          value = item[fd.k] ?? item[fd.k.replace(/Id$/,'')] ?? '';
+        }
+        if(value === null || value === undefined) value = '';
+        input.value = value;
+        label.appendChild(input);
+        body.appendChild(label);
+        inputs[fd.k] = input;
+      });
+      // status if applicable
+      let statusInput = null;
+      if(s.hasStatus){
+        const label = document.createElement('label'); label.className='field';
+        label.innerHTML = `<span class="small muted">Status</span>`;
+        const sel = document.createElement('select'); sel.name = 'status';
+        s.statusOptions.forEach(o=>{ const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); });
+        label.appendChild(sel); body.appendChild(label);
+        statusInput = sel;
+      }
+      // delete select
+      const labelDel = document.createElement('label'); labelDel.className='field';
+      labelDel.innerHTML = `<span class="small muted">Delete flag</span>`;
+      const selDel = document.createElement('select'); selDel.name='delete';
+      ['EXIST','DELETED'].forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; selDel.appendChild(op); });
+      labelDel.appendChild(selDel); body.appendChild(labelDel);
+
+      // handlers
+      $('#modalCancel').onclick = ()=> { modal.classList.add('hidden'); body.innerHTML=''; };
+      $('#modalSave').onclick = async ()=>{
+        // collect body similar to create
+        const formData = new FormData();
+        for(const k in inputs) formData.set(k, inputs[k].value);
+        if(statusInput) formData.set('status', statusInput.value);
+        const deleteFlag = selDel.value;
+        const bodyToSend = buildCreateBody(formData);
+        const id = item.id;
+        try{
+          let url = apiUrl(s.path + '/update?id=' + encodeURIComponent(id) + '&delete=' + encodeURIComponent(deleteFlag));
+          if(s.hasStatus){
+            const qn = s.statusName || 'status';
+            url += '&' + encodeURIComponent(qn) + '=' + encodeURIComponent(formData.get('status') || '');
+          }
+          const data = await fetchJson(url, { method:'PUT', body: bodyToSend });
+          alert('Updated');
+          modal.classList.add('hidden');
+          fetchList();
+        }catch(err){
+          console.error(err);
+          alert(err.data?.message || err.message || JSON.stringify(err));
+        }
+      };
+    }
+
+    async function doDelete(id){
+      if(!confirm('Удалить запись ID ' + id + ' ?')) return;
+      try{
+        const url = apiUrl(s.path + '/delete?id=' + encodeURIComponent(id));
+        const data = await fetchJson(url, { method:'DELETE' });
+        alert('Deleted');
+        fetchList();
+      }catch(err){
+        console.error(err);
+        alert(err.data?.message || err.message || JSON.stringify(err));
+      }
+    }
+
+    // initial list load
+    fetchList();
+  }
+
+  /*******************************
+   * Auth UI (custom)
+   *******************************/
+  function renderAuth(){
+    panelContent.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'grid-two';
+
+    // left: login/register
+    const left = document.createElement('div');
+    const loginCard = document.createElement('div'); loginCard.className='card';
+    loginCard.innerHTML = `<h3>Login</h3>
+      <form id="loginFormLocal" class="row">
+        <label class="field"><span class="small muted">Username</span><input name="username" required /></label>
+        <label class="field"><span class="small muted">Password</span><input name="password" type="password" required /></label>
+        <div class="actions"><button class="btn" type="submit">Login</button><button class="btn ghost" id="logoutBtn" type="button">Logout</button></div>
+      </form>`;
+    left.appendChild(loginCard);
+
+    const regCard = document.createElement('div'); regCard.className='card';
+    regCard.innerHTML = `<h3>Register</h3>
+      <form id="regFormLocal" class="row">
+        <label class="field"><span class="small muted">Username</span><input name="username" required /></label>
+        <label class="field"><span class="small muted">Password</span><input name="password" type="password" required /></label>
+        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
+        <div class="actions"><button class="btn" type="submit">Register</button></div>
+      </form>
+      <div class="muted small" style="margin-top:8px">По умолчанию роль PARENT на бекенде.</div>`;
+    left.appendChild(regCard);
+
+    // right: forgot/reset
+    const right = document.createElement('div');
+    const forgotCard = document.createElement('div'); forgotCard.className='card';
+    forgotCard.innerHTML = `<h3>Forgot Password</h3>
+      <form id="forgotFormLocal" class="row">
+        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
+        <div class="actions"><button class="btn" type="submit">Send code</button></div>
+      </form>`;
+    const resetCard = document.createElement('div'); resetCard.className='card';
+    resetCard.innerHTML = `<h3>Reset Password</h3>
+      <form id="resetFormLocal" class="row">
+        <label class="field"><span class="small muted">Email</span><input name="email" type="email" required /></label>
+        <label class="field"><span class="small muted">Code</span><input name="code" required /></label>
+        <label class="field"><span class="small muted">New password</span><input name="newPassword" type="password" required /></label>
+        <div class="actions"><button class="btn" type="submit">Reset</button></div>
+      </form>`;
+    right.appendChild(forgotCard); right.appendChild(resetCard);
+
+    box.appendChild(left); box.appendChild(right);
+    panelContent.appendChild(box);
+
+    // attach events
+    $('#logoutBtn').addEventListener('click', ()=>{
+      localStorage.removeItem('kg_token'); showUserInfo(); alert('Logged out');
+    });
+
+    $('#loginFormLocal').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try{
+        const data = await fetchJson(apiUrl('/api/auth/login'), { method:'POST', body: { username: fd.get('username'), password: fd.get('password') }});
+        if(data && data.token){ localStorage.setItem('kg_token', data.token); showUserInfo(); alert('Успешный вход'); }
+        else alert('Ответ: ' + JSON.stringify(data));
+      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+    });
+
+    $('#regFormLocal').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try{
+        const data = await fetchJson(apiUrl('/api/auth/register'), { method:'POST', body: { username: fd.get('username'), password: fd.get('password'), email: fd.get('email') }});
+        alert(data.message || 'Registered');
+      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+    });
+
+    $('#forgotFormLocal').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try{
+        const data = await fetchJson(apiUrl('/api/auth/forgot-password'), { method:'POST', body: { email: fd.get('email') }});
+        alert(data.message + (data.code ? '\\nCode: ' + data.code : ''));
+      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+    });
+
+    $('#resetFormLocal').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try{
+        const data = await fetchJson(apiUrl('/api/auth/reset-password'), { method:'POST', body: { email: fd.get('email'), code: fd.get('code'), newPassword: fd.get('newPassword') }});
+        alert(data.message || 'Password reset');
+      }catch(err){ console.error(err); alert(err.data?.message || err.message || JSON.stringify(err)); }
+    });
+  }
+
+  /*******************************
+   * Menu wiring
+   *******************************/
+  function switchTo(key){
+    // set active
+    $$('#menu button').forEach(b => b.classList.toggle('active', b.dataset.key === key));
+    if(key === 'auth') renderAuth();
+    else renderEntity(key);
+  }
+  $$('#menu button').forEach(b => b.addEventListener('click', ()=> switchTo(b.dataset.key)));
+  $('#btnShowAuth').addEventListener('click', ()=> switchTo('auth'));
+
+  // initial
+  showUserInfo();
+  renderAuth();
+
+  // modal close on backdrop click
+  $('#modal').addEventListener('click', (ev)=> { if(ev.target === $('#modal')) $('#modal').classList.add('hidden'); });
+
   </script>
-  <!-- Added extended CRUD forms based on backend models -->
-  <section id="extended-model-forms">
-    <h2>Extended Model Fields</h2>
-    <h3>Child</h3>
-    <form id="child-extended-form">
-      <label>First Name <input name="firstName" /></label>
-      <label>Last Name <input name="lastName" /></label>
-      <label>Patronymic <input name="patronymic" /></label>
-      <label>Date of Birth <input name="dateOfBirth" type="date" /></label>
-      <label>Group ID <input name="groupId" type="number" /></label>
-      <label>Parent IDs (comma separated) <input name="parentIds" /></label>
-      <button type="submit">Create Child (Extended)</button>
-    </form>
-
-    <h3>Parent</h3>
-    <form id="parent-extended-form">
-      <label>First Name <input name="firstName" /></label>
-      <label>Last Name <input name="lastName" /></label>
-      <label>Patronymic <input name="patronymic" /></label>
-      <label>Role <input name="role" /></label>
-      <label>Phone Number <input name="phoneNumber" /></label>
-      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
-      <label>Email <input name="email" /></label>
-      <button type="submit">Create Parent (Extended)</button>
-    </form>
-
-    <h3>Teacher</h3>
-    <form id="teacher-extended-form">
-      <label>First Name <input name="firstName" /></label>
-      <label>Last Name <input name="lastName" /></label>
-      <label>Patronymic <input name="patronymic" /></label>
-      <label>Position <input name="position" /></label>
-      <label>Date of Birth <input name="dateOfBirth" type="date" /></label>
-      <label>Phone Number <input name="phoneNumber" /></label>
-      <label>Secondary Phone <input name="secondaryPhoneNumber" /></label>
-      <label>Email <input name="email" /></label>
-      <button type="submit">Create Teacher (Extended)</button>
-    </form>
-
-    <h3>Payment</h3>
-    <form id="payment-extended-form">
-      <label>Child ID <input name="childId" type="number" /></label>
-      <label>Payment Sum <input name="paymentSum" type="number" step="0.01" /></label>
-      <label>Payment Date <input name="paymentDate" type="datetime-local" /></label>
-      <label>Period <input name="period" /></label>
-      <label>Payment Type <input name="paymentType" /></label>
-      <button type="submit">Create Payment (Extended)</button>
-    </form>
-
-    <h3>Group</h3>
-    <form id="group-extended-form">
-      <label>Name <input name="name" /></label>
-      <label>Age Group ID <input name="ageGroupId" type="number" /></label>
-      <label>Teacher ID <input name="teacherId" type="number" /></label>
-      <label>Assistant ID <input name="assistantId" type="number" /></label>
-      <button type="submit">Create Group (Extended)</button>
-    </form>
-  </section>
 </body>
 </html>
